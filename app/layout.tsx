@@ -1,8 +1,10 @@
+import { ReactNode } from "react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/Navbar";
+import ReduxProvider from "@/components/ReduxProvider"; // Keep ReduxProvider import
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -20,11 +22,7 @@ export const metadata: Metadata = {
   description: "Created with love by Vinayak Gore",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body
@@ -36,8 +34,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          {children}
+          <ReduxProvider>
+            {" "}
+            {/* Wrap with ReduxProvider */}
+            <Navbar />
+            {children}
+          </ReduxProvider>
         </ThemeProvider>
       </body>
     </html>
