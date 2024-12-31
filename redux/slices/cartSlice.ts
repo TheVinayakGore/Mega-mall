@@ -25,12 +25,15 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addItem: (state, action: PayloadAction<CartItem>) => {
-      const item = state.items.find((item) => item.id === action.payload.id);
-      if (item) {
-        item.quantity += action.payload.quantity; // Increment quantity if the product is already in the cart
+    addItem: (state, action) => {
+      const itemIndex = state.items.findIndex((item) => item.id === action.payload.id);
+    
+      if (itemIndex >= 0) {
+        // If item already exists, increment its quantity
+        state.items[itemIndex].quantity += action.payload.quantity || 1;
       } else {
-        state.items.push(action.payload); // Add new product to the cart
+        // If item is new, add it to the cart
+        state.items.push({ ...action.payload, quantity: action.payload.quantity || 1 });
       }
     },
     removeItem: (state, action: PayloadAction<string>) => {
@@ -57,6 +60,10 @@ const cartSlice = createSlice({
         }
       }
     },
+    // Set the cart items, usually to be called after loading from localStorage
+    setCartItems: (state, action: PayloadAction<CartItem[]>) => {
+      state.items = action.payload;
+    },
   },
 });
 
@@ -66,5 +73,6 @@ export const {
   clearCart,
   incrementQuantity,
   decrementQuantity,
+  setCartItems,
 } = cartSlice.actions;
 export default cartSlice.reducer;

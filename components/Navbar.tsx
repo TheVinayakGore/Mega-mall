@@ -14,7 +14,6 @@ import Image from "next/image";
 import {
   Sheet,
   SheetContent,
-  // SheetFooter,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { MdOutlineMenu } from "react-icons/md";
