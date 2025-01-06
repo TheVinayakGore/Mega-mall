@@ -22,6 +22,7 @@ interface Product {
       url: string;
     };
   };
+  colors?: string[];
 }
 
 export default function Hero() {
@@ -71,7 +72,10 @@ export default function Hero() {
           </h2>
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product, index) => (
-              <div key={product._id} className="flex justify-center transition hover:scale-105">
+              <div
+                key={product._id}
+                className="flex justify-center transition hover:scale-105"
+              >
                 <Card
                   className={`p-5 shadow-lg hover:shadow-xl transition-all hover:scale-110 delay-300 ease-in-out w-full max-w-sm animate-slide-up delay-${index * 100}`}
                 >
@@ -87,8 +91,20 @@ export default function Hero() {
                     {product.title}
                   </p>
                   <p className="flex flex-col items-center text-green-500 text-2xl text-center">
-                    ${product.price}
+                    ₹{product.price}
                   </p>
+                  {product.colors && product.colors.length > 0 && (
+                    <div className="mt-3 flex justify-center gap-2">
+                      {product.colors.map((color, colorIndex) => (
+                        <div
+                          key={colorIndex}
+                          className="w-6 h-6 rounded-full"
+                          style={{ backgroundColor: color }}
+                          title={color}
+                        />
+                      ))}
+                    </div>
+                  )}
                   <Button
                     className="mt-4 transition hover:scale-105 w-full"
                     asChild

@@ -8,6 +8,7 @@ import { useState } from "react";
 import { clearCart } from "@/redux/slices/cartSlice";
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
+import { toast } from "react-toastify";
 
 const Checkout = () => {
   const dispatch = useDispatch();
@@ -36,7 +37,7 @@ const Checkout = () => {
 
   const handleCheckout = () => {
     // Here you can add logic to process the checkout (like payment integration)
-    console.log("Proceeding with checkout", userDetails);
+    toast.warning("Proceeding with checkout" + userDetails);
     // Optionally, clear the cart after checkout
     dispatch(clearCart());
   };
@@ -126,6 +127,7 @@ const Checkout = () => {
             Clear Cart
           </Button>
         </div>
+
       </div>
     </main>
   );

@@ -11,6 +11,13 @@ interface CartItem {
       url: string;
     };
   };
+  color: string[];
+  model: string;
+  rating: number;
+  review: number;
+  description: string;
+  size: string[];
+  reviewDescription: string;
 }
 
 interface CartState {
@@ -26,14 +33,19 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addItem: (state, action) => {
-      const itemIndex = state.items.findIndex((item) => item.id === action.payload.id);
-    
+      const itemIndex = state.items.findIndex(
+        (item) => item.id === action.payload.id
+      );
+
       if (itemIndex >= 0) {
         // If item already exists, increment its quantity
         state.items[itemIndex].quantity += action.payload.quantity || 1;
       } else {
         // If item is new, add it to the cart
-        state.items.push({ ...action.payload, quantity: action.payload.quantity || 1 });
+        state.items.push({
+          ...action.payload,
+          quantity: action.payload.quantity || 1,
+        });
       }
     },
     removeItem: (state, action: PayloadAction<string>) => {

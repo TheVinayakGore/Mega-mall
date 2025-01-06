@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import { useDispatch } from "react-redux";
-import { addItem } from "@/redux/slices/cartSlice"; 
+import { addItem } from "@/redux/slices/cartSlice";
 import Image from "next/image";
 import { Drawer, DrawerTrigger } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Cart from "@/app/product/cart";
+import Navbar from "@/components/Navbar";
 
 interface Product {
   _id: string;
@@ -49,6 +50,7 @@ const ProductDetails = () => {
   const [pincode, setPincode] = useState<string>("");
   const [service, setService] = useState<boolean | null>(null);
   const [selectedColor, setSelectedColor] = useState("");
+  const [selectedSize, setSelectedSize] = useState<string>("~");
 
   const checkPincode = async () => {
     try {
@@ -94,15 +96,18 @@ const ProductDetails = () => {
         price: product.price,
         quantity: 1,
         image: product.image,
+        color: selectedColor, // Pass the selected color
+        size: selectedSize, // Pass the selected size (ensure `selectedSize` is set)
       };
-      dispatch(addItem(cartItem));
+      dispatch(addItem(cartItem)); // Dispatch to redux store
     }
   };
 
   return (
     <>
+      <Navbar />
       <main className="flex flex-col items-start py-24 px-20 w-full h-full">
-        <div className="flex items-start justify-between gap-14 w-full h-full">
+        <div className="flex items-start justify-between gap-10 w-full h-full">
           <section id="ID1" className="sticky top-24 w-[70rem] h-full">
             <div className="flex items-start w-full h-full">
               <Image
@@ -148,7 +153,7 @@ const ProductDetails = () => {
           </section>
           <section
             id="ID2"
-            className="sticky top-0 overflow-auto w-full h-full"
+            className="sticky top-0 overflow-auto px-5 w-full h-full"
           >
             <div>
               <div>
@@ -176,33 +181,14 @@ const ProductDetails = () => {
               <p className="leading-relaxed">{product.description}</p>
             </div>
             <div className="flex my-6 items-center space-x-10 w-full">
-              <div className="flex items-center w-64 h-10">
-                <span className="mr-2">Color :</span>
-                {product.color.map((color, index) => (
-                  <button
-                    key={index}
-                    aria-label={`Color option ${color}`}
-                    onClick={() => {
-                      setSelectedColor(color);
-                    }}
-                    className="border border-zinc-500 rounded-full w-6 h-6 focus:w-7 focus:h-7"
-                    style={{ backgroundColor: color }}
-                  ></button>
-                ))}
-                <span className="ml-5">Blue : </span>
-                <button
-                  className="ml-2 border border-zinc-500 rounded-full hover:cursor-no-drop w-6 h-6"
-                  style={{ backgroundColor: selectedColor }}
-                />
-              </div>
-              <div className="flex ml-6 items-center">
-                {product.size && (
+              {product.size && (
+                <div className="flex items-center">
                   <div className="relative">
-                    <Select>
+                    <Select onValueChange={(value) => setSelectedSize(value)}>
                       <SelectTrigger className="w-32">
                         <SelectValue placeholder="M" />
                       </SelectTrigger>
-                      <SelectContent className="">
+                      <SelectContent>
                         {product.size.map((size, index) => (
                           <SelectItem key={index} value={size}>
                             {size}
@@ -211,7 +197,26 @@ const ProductDetails = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                )}
+                </div>
+              )}
+              <div className="flex items-center w-full h-10">
+                <span className="mr-2">Colors :</span>
+                {product.color.map((color, index) => (
+                  <button
+                    key={index}
+                    aria-label={`Color option ${color}`}
+                    onClick={() => {
+                      setSelectedColor(color);
+                    }}
+                    className="border border-zinc-200 dark:border-zinc-800 rounded-full w-6 h-6"
+                    style={{ backgroundColor: color }}
+                  ></button>
+                ))}
+                <span className="ml-5">Selected : </span>
+                <button
+                  className="ml-2 border border-zinc-500 dark:border-zinc-800 rounded-full hover:cursor-no-drop w-6 h-6"
+                  style={{ backgroundColor: selectedColor }}
+                />
               </div>
             </div>
             <div className="flex items-center justify-between border-t border-b border-zinc-700 py-4 my-5 w-full">

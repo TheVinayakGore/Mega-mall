@@ -6,14 +6,50 @@ export default defineType({
   type: "document",
   fields: [
     defineField({
+      title: "Model",
+      name: "model",
+      type: "string",
+    }),
+    defineField({
       title: "Title",
       name: "title",
       type: "string",
     }),
     defineField({
+      title: "Slug",
+      name: "slug",
+      type: "slug",
+      options: {
+        source: "title",
+        maxLength: 96,
+      },
+    }),
+    defineField({
+      title: "Ratings",
+      name: "rating",
+      type: "number",
+    }),
+    defineField({
+      title: "Reviews",
+      name: "review",
+      type: "number",
+    }),
+    defineField({
       title: "Description",
       name: "description",
       type: "text",
+    }),
+    defineField({
+      title: "Color",
+      name: "color",
+      type: "array",
+      of: [{ type: "string" }],
+    }),
+    defineField({
+      title: "Size",
+      name: "size",
+      type: "array",
+      of: [{ type: "string" }],
     }),
     defineField({
       title: "Price",
@@ -32,6 +68,11 @@ export default defineType({
       title: "Category",
       name: "category",
       type: "string",
+    }),
+    defineField({
+      title: "Review Descriptions",
+      name: "reviewDescription",
+      type: "text",
     }),
   ],
 });

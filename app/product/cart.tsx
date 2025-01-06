@@ -98,7 +98,13 @@ const Cart = () => {
                         </DrawerDescription>
                       </div>
                       <div className="flex items-center justify-between text-sm mt-3 w-full">
-                        <p className="text-start w-full">Color : Blue</p>
+                        <p className="text-start w-full">Size : {item.size}</p>
+                        <div className="flex items-center m-auto w-full">
+                          Color :{" "}
+                          <button
+                            className={`ml-2 border border-zinc-500 dark:border-zinc-800 rounded-full hover:cursor-no-drop bg-${item.color}-500 w-4 h-4`}
+                          />
+                        </div>
                         <p className="text-start w-full">
                           {item.quantity} x ₹{item.price * item.quantity}
                         </p>
@@ -158,7 +164,11 @@ const Cart = () => {
               Total Payable Amount : ₹{totalAmount}
             </p>
             <div className="flex space-x-4">
-              <Link href="/checkout" target="_blank">
+              <Link
+                href="/checkout"
+                target="_blank"
+                className={`${cartItems.length === 0 ? "hidden" : "opacity-100"}`}
+              >
                 <Button className="flex items-center justify-end text-base font-normal bg-sky-500 hover:bg-sky-600 text-white">
                   <PiShoppingBagOpenDuotone className="mr-3 h-5 w-5" />
                   Checkout Now
@@ -167,7 +177,7 @@ const Cart = () => {
               <Button
                 variant="outline"
                 onClick={handleClearCart}
-                className="text-base text-zinc-500 font-normal border-zinc-700 hover:bg-black hover:border-zinc-500 hover:text-white"
+                className={`text-base text-zinc-500 font-normal border-zinc-700 hover:bg-black hover:border-zinc-500 hover:text-white ${cartItems.length === 0 ? "opacity-20 hover:cursor-not-allowed bg-black text-white" : "opacity-100"}`}
               >
                 <ImBin className="mr-3 h-5 w-4" />
                 Clear Cart
