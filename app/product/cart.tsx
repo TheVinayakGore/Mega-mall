@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { FaPlus, FaMinus } from "react-icons/fa6";
 import { PiShoppingBagOpenDuotone } from "react-icons/pi";
-import Link from "next/link";
+// import Link from "next/link";
 import { ImBin } from "react-icons/im";
 import { IoClose } from "react-icons/io5";
 import { urlFor } from "@/sanity/lib/image";
@@ -24,6 +24,7 @@ import {
   removeItem,
   setCartItems,
 } from "@/redux/slices/cartSlice";
+import toast from "react-hot-toast";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -54,7 +55,16 @@ const Cart = () => {
 
   const handleClearCart = () => {
     dispatch(clearCart());
+    toast.success("Cart cleared !");
     localStorage.removeItem("cartItems"); // Remove cart from localStorage when cleared
+  };
+
+  const handleToast = () => {
+    dispatch(clearCart());
+    localStorage.removeItem("cartItems");
+    toast.success(
+      `Order Successful for ${cartItems.map((item) => item.title).join(", ")}!`
+    );
   };
 
   return (
@@ -98,11 +108,22 @@ const Cart = () => {
                         </DrawerDescription>
                       </div>
                       <div className="flex items-center justify-between text-sm mt-3 w-full">
-                        <p className="text-start w-full">Size : {item.size}</p>
-                        <div className="flex items-center m-auto w-full">
+                        <div
+                          className={`${!item.size && "hidden"} text-start w-full`}
+                        >
+                          <p>Size : {item.size}</p>
+                        </div>
+                        <div
+                          className={`flex ${!item.color && "hidden"} items-center m-auto w-full`}
+                        >
                           Color :{" "}
-                          <button
-                            className={`ml-2 border border-zinc-500 dark:border-zinc-800 rounded-full hover:cursor-no-drop bg-${item.color}-500 w-4 h-4`}
+                          <div
+                            className="ml-2 border border-zinc-500 dark:border-zinc-800 rounded-full hover:cursor-no-drop w-4 h-4"
+                            style={{
+                              backgroundColor: Array.isArray(item.color)
+                                ? item.color[0]
+                                : item.color,
+                            }}
                           />
                         </div>
                         <p className="text-start w-full">
@@ -164,7 +185,14 @@ const Cart = () => {
               Total Payable Amount : ₹{totalAmount}
             </p>
             <div className="flex space-x-4">
-              <Link
+              <Button
+                onClick={handleToast}
+                className={`flex items-center justify-end text-base font-normal bg-sky-500 hover:bg-sky-600 text-white ${cartItems.length === 0 ? "hidden" : "opacity-100"}`}
+              >
+                <PiShoppingBagOpenDuotone className="mr-3 h-5 w-5" />
+                Checkout Now
+              </Button>
+              {/* <Link
                 href="/checkout"
                 target="_blank"
                 className={`${cartItems.length === 0 ? "hidden" : "opacity-100"}`}
@@ -173,7 +201,7 @@ const Cart = () => {
                   <PiShoppingBagOpenDuotone className="mr-3 h-5 w-5" />
                   Checkout Now
                 </Button>
-              </Link>
+              </Link> */}
               <Button
                 variant="outline"
                 onClick={handleClearCart}

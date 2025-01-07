@@ -22,7 +22,7 @@ interface Product {
       url: string;
     };
   };
-  colors?: string[];
+  color: string[];
 }
 
 export default function Hero() {
@@ -93,18 +93,20 @@ export default function Hero() {
                   <p className="flex flex-col items-center text-green-500 text-2xl text-center">
                     ₹{product.price}
                   </p>
-                  {product.colors && product.colors.length > 0 && (
-                    <div className="mt-3 flex justify-center gap-2">
-                      {product.colors.map((color, colorIndex) => (
-                        <div
-                          key={colorIndex}
-                          className="w-6 h-6 rounded-full"
-                          style={{ backgroundColor: color }}
-                          title={color}
-                        />
-                      ))}
-                    </div>
-                  )}
+                  <div className="flex items-center justify-center m-auto w-full">
+                    Colors :{" "}
+                    {product.color && product.color.length > 0 && (
+                      <div className="m-2 flex justify-center gap-[1px]">
+                        {product.color.map((item) => (
+                          <div
+                            key={product._id}
+                            className="w-5 h-5 border border-zinc-200 dark:border-zinc-800 rounded-full"
+                            style={{ backgroundColor: item }}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   <Button
                     className="mt-4 transition hover:scale-105 w-full"
                     asChild

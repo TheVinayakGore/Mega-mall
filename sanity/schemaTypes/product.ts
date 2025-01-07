@@ -70,6 +70,12 @@ export default defineType({
       type: "string",
     }),
     defineField({
+      title: "Likes",
+      name: "likes",
+      type: "number",
+      initialValue: 0,
+    }),
+    defineField({
       title: "Review Descriptions",
       name: "reviewDescription",
       type: "text",

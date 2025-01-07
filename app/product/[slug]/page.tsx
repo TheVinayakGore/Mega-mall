@@ -9,7 +9,7 @@ import Image from "next/image";
 import { Drawer, DrawerTrigger } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { PiHeartFill } from "react-icons/pi";
-import Link from "next/link";
+// import Link from "next/link";
 import { FaRegStar, FaStar } from "react-icons/fa6";
 import { Input } from "@/components/ui/input";
 import LoadingBar from "@/components/LoadingBar";
@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import Cart from "@/app/product/cart";
 import Navbar from "@/components/Navbar";
+import toast from "react-hot-toast";
 
 interface Product {
   _id: string;
@@ -40,6 +41,7 @@ interface Product {
       url: string;
     };
   };
+  likes: number;
 }
 
 const ProductDetails = () => {
@@ -50,7 +52,8 @@ const ProductDetails = () => {
   const [pincode, setPincode] = useState<string>("");
   const [service, setService] = useState<boolean | null>(null);
   const [selectedColor, setSelectedColor] = useState("");
-  const [selectedSize, setSelectedSize] = useState<string>("~");
+  const [selectedSize, setSelectedSize] = useState<string>("");
+  const [liked, setLiked] = useState(false);
 
   const checkPincode = async () => {
     try {
@@ -103,6 +106,23 @@ const ProductDetails = () => {
     }
   };
 
+  const handleToast = () => {
+    toast.success(`Order Successful for ${product.title}!`);
+  };
+
+  const handleLikeClick = () => {
+    setLiked((prevLiked) => {
+      const newLikedStatus = !prevLiked; // Toggle the like status
+      return newLikedStatus; // Return the new state value
+    });
+
+    if (liked) {
+      toast.error("Unliked!");
+    } else {
+      toast.success("Liked!");
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -121,9 +141,12 @@ const ProductDetails = () => {
               <Button
                 variant="outline"
                 size="icon"
-                className="-ml-12 mt-2 border-none rounded-full bg-zinc-400 hover:bg-transparent text-zinc-100 hover:text-red-500"
+                className="-ml-12 mt-2 border-none shadow-md rounded-full bg-white"
+                onClick={handleLikeClick}
               >
-                <PiHeartFill className="h-6 w-6" />
+                <PiHeartFill
+                  className={`h-6 w-6 ${liked ? "text-rose-500" : "text-zinc-300 hover:text-red-500"}`}
+                />
               </Button>
             </div>
             <div className="flex items-center space-x-3 py-5 mt-5 border-t border-zinc-500 w-full h-full">
@@ -143,12 +166,19 @@ const ProductDetails = () => {
               </div>
               <Button
                 className="text-base hover:bg-yellow-500 h-14 w-full"
+                onClick={handleToast}
+              >
+                Buy Now
+              </Button>
+              {/* <Button
+                className="text-base hover:bg-yellow-500 h-14 w-full"
+                onClick={handleToast}
                 asChild
               >
                 <Link href="/checkout" target="_blank">
                   Buy Now
                 </Link>
-              </Button>
+              </Button> */}
             </div>
           </section>
           <section
@@ -212,11 +242,14 @@ const ProductDetails = () => {
                     style={{ backgroundColor: color }}
                   ></button>
                 ))}
-                <span className="ml-5">Selected : </span>
-                <button
-                  className="ml-2 border border-zinc-500 dark:border-zinc-800 rounded-full hover:cursor-no-drop w-6 h-6"
-                  style={{ backgroundColor: selectedColor }}
-                />
+
+                <div className={`flex ${!selectedColor && "hidden"}`}>
+                  <span className="ml-5">Selected : </span>
+                  <div
+                    className="ml-2 border border-zinc-500 dark:border-zinc-800 rounded-full hover:cursor-no-drop w-6 h-6"
+                    style={{ backgroundColor: selectedColor }}
+                  />
+                </div>
               </div>
             </div>
             <div className="flex items-center justify-between border-t border-b border-zinc-700 py-4 my-5 w-full">
