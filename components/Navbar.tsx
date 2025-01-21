@@ -1,36 +1,47 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { MdOutlineMenu } from "react-icons/md";
 import { BsCart4 } from "react-icons/bs";
 import { Drawer, DrawerTrigger } from "@/components/ui/drawer";
 import Cart from "@/app/product/cart";
-import { IoHomeOutline } from "react-icons/io5";
-import { IoIosGlobe } from "react-icons/io";
-import { IoListSharp } from "react-icons/io5";
-import { MdOutlineContacts } from "react-icons/md";
+import { useClerk, useUser } from "@clerk/nextjs";
+import { IoMdHelpCircleOutline } from "react-icons/io";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Navbar = () => {
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const { signOut } = useClerk();
+  const { isSignedIn } = useUser();
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
+  // Toggle Theme Function
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
 
   return (
     <>
-      <nav className="fixed top-0 flex items-center justify-between p-2 px-4 md:px-10 bg-zinc-100/[0.8] dark:bg-zinc-950/[0.8] backdrop-blur-sm shadow-lg z-50 w-full">
+      <nav className="fixed top-0 flex items-center justify-between py-3 px-4 md:px-10 bg-white/[0.8] dark:bg-zinc-950/[0.8] backdrop-blur-sm shadow-lg z-50 w-full">
         <Link
           href="/"
           className="flex items-center font-bold whitespace-nowrap"
@@ -38,38 +49,23 @@ const Navbar = () => {
           <Image
             src="/logo.png"
             alt="logo"
-            width={30}
-            height={30}
-            className="w-7 md:w-10"
+            width={25}
+            height={25}
+            className="w-auto"
           />
           <span className="ml-3 text-xl md:text-2xl font-bold">
             Mega <span className="text-sky-400 italic">mall</span>
           </span>
         </Link>
-        <div className="flex items-center space-x-1">
-          <ul className="hidden md:flex items-center space-x-5 font-medium mr-5">
-            <li>
-              <Link href="/" className="opacity-60 hover:opacity-100">
-                About
-              </Link>
-            </li>
-            <li>
-              <Link href="/" className="opacity-60 hover:opacity-100">
-                Help
-              </Link>
-            </li>
-            <li>
-              <Link href="/" className="opacity-60 hover:opacity-100">
-                Contact
-              </Link>
-            </li>
+        <div className="flex items-center space-x-4">
+          <ul className="hidden md:flex items-center space-x-4">
             <li>
               <Drawer>
                 <DrawerTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-xl hover:bg-transparent hover:text-sky-500 opacity-60 hover:opacity-100"
+                    className="text-xl hover:bg-transparent hover:text-sky-500 opacity-60 hover:opacity-100 flex items-center"
                   >
                     <BsCart4 />
                   </Button>
@@ -77,51 +73,67 @@ const Navbar = () => {
                 <Cart />
               </Drawer>
             </li>
-          </ul>
-          <div className="hidden md:block">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+            <li>
+              {isSignedIn ? (
                 <Button
                   variant="outline"
-                  size="icon"
-                  className="bg-white text-black hover:bg-zinc-100 dark:bg-zinc-950 dark:text-white dark:hover:bg-zinc-900 transition-colors duration-300"
+                  size="sm"
+                  className="hover:bg-sky-400 dark:hover:bg-sky-500 hover:text-white hover:border-sky-400 flex items-center"
+                  onClick={() => signOut()}
                 >
-                  <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                  <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                  <span className="sr-only">Toggle theme</span>
+                  Sign Out
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="bg-white dark:bg-zinc-950 shadow-lg rounded-md"
+              ) : (
+                <Link href="/sign-in">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center"
+                  >
+                    Sign In
+                  </Button>
+                </Link>
+              )}
+            </li>
+            <li>
+              <button
+                className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-full"
+                onClick={toggleTheme}
               >
-                <DropdownMenuItem
-                  onClick={() => setTheme("light")}
-                  className="hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors duration-300"
-                >
-                  Light
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setTheme("dark")}
-                  className="hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors duration-300"
-                >
-                  Dark
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setTheme("system")}
-                  className="hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors duration-300"
-                >
-                  System
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+                {theme === "light" ? (
+                  <SunIcon className="h-[1.2rem] w-[1.2rem]" />
+                ) : (
+                  <MoonIcon className="h-[1.2rem] w-[1.2rem]" />
+                )}
+                <span className="sr-only">Toggle theme</span>
+              </button>
+            </li>
+            <li>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Link
+                      href="/help"
+                      target="_blank"
+                      className="opacity-60 hover:opacity-100 text-xl"
+                    >
+                      <IoMdHelpCircleOutline />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <span>Help</span>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </li>
+          </ul>
+
           <Sheet>
             <SheetTrigger asChild>
               <Button
                 variant="outline"
                 size="icon"
-                className="md:hidden bg-white text-black hover:bg-zinc-100 dark:bg-zinc-800 dark:text-white dark:hover:bg-zinc-700 transition-colors duration-300"
+                className="md:hidden bg-white text-black hover:bg-zinc-100 dark:bg-zinc-800 dark:text-white dark:hover:bg-zinc-700 transition-colors duration-300 flex items-center"
               >
                 <MdOutlineMenu className="h-[1.5rem] w-[1.5rem]" />
               </Button>
@@ -129,52 +141,51 @@ const Navbar = () => {
             <SheetContent className="flex flex-col items-start">
               <ul className="flex flex-col items-start justify-start space-y-3">
                 <li>
-                  <Button
-                    variant="outline"
-                    className="flex items-center justify-between py-5 w-36 rounded-lg shadow-lg transform transition-transform hover:scale-105"
-                    asChild
-                  >
-                    <Link href="/" className="flex items-center space-x-2">
-                      <IoHomeOutline className="text-xl" />
-                      <span>Home</span>
-                    </Link>
-                  </Button>
+                  <Drawer>
+                    <DrawerTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="flex items-center justify-between py-5 w-36 rounded-lg shadow-lg transform transition-transform hover:scale-105 hover:bg-sky-400 dark:hover:bg-sky-500 hover:text-white hover:border-sky-400"
+                      >
+                        <BsCart4 className="text-xl" />
+                        <span>Your Cart</span>
+                      </Button>
+                    </DrawerTrigger>
+                    <Cart />
+                  </Drawer>
                 </li>
                 <li>
                   <Button
                     variant="outline"
-                    className="flex items-center justify-between py-5 w-36 rounded-lg shadow-lg transform transition-transform hover:scale-105"
+                    className="flex items-center justify-between py-5 w-36 rounded-lg shadow-lg transform transition-transform hover:scale-105 hover:bg-sky-400 dark:hover:bg-sky-500 hover:text-white hover:border-sky-400"
                     asChild
                   >
                     <Link href="/" className="flex items-center space-x-2">
-                      <IoListSharp className="text-xl" />
-                      <span>Shop</span>
+                      <IoMdHelpCircleOutline className="text-xl" />
+                      <span>Help Page</span>
                     </Link>
                   </Button>
                 </li>
                 <li>
-                  <Button
-                    variant="outline"
-                    className="flex items-center justify-between py-5 w-36 rounded-lg shadow-lg transform transition-transform hover:scale-105"
-                    asChild
-                  >
-                    <Link href="/" className="flex items-center space-x-2">
-                      <IoIosGlobe className="text-xl" />
-                      <span>About</span>
+                  {isSignedIn ? (
+                    <Button
+                      variant="outline"
+                      className="flex items-center justify-between py-5 w-36 rounded-lg shadow-lg transform transition-transform hover:scale-105 hover:bg-sky-400 dark:hover:bg-sky-500 hover:text-white hover:border-sky-400"
+                      onClick={() => signOut()}
+                    >
+                      <IoMdHelpCircleOutline className="text-xl" />
+                      <span>Sign Out</span>
+                    </Button>
+                  ) : (
+                    <Link href="/sign-in">
+                      <Button
+                        variant="outline"
+                        className="flex items-center justify-between py-5 w-36 rounded-lg shadow-lg transform transition-transform hover:scale-105"
+                      >
+                        Sign In
+                      </Button>
                     </Link>
-                  </Button>
-                </li>
-                <li>
-                  <Button
-                    variant="outline"
-                    className="flex items-center justify-between py-5 w-36 rounded-lg shadow-lg transform transition-transform hover:scale-105"
-                    asChild
-                  >
-                    <Link href="/" className="flex items-center space-x-2">
-                      <MdOutlineContacts className="text-xl" />
-                      <span>Contact</span>
-                    </Link>
-                  </Button>
+                  )}
                 </li>
               </ul>
             </SheetContent>

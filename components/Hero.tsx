@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { MdKeyboardDoubleArrowDown } from "react-icons/md";
+import About from "./About";
 
 interface Product {
   _id: string;
@@ -40,8 +41,8 @@ export default function Hero() {
 
   return (
     <>
-      <main className="animate-fade-in delay-500">
-        <section className="flex flex-col items-center justify-center">
+      <main className="animate-fade-in delay-500 max-w-7xl">
+        <section className="flex flex-col items-center justify-center w-full">
           <div className="py-6 text-center">
             <h1 className="font-bold text-xl sm:text-4xl md:text-6xl lg:text-8xl">
               Welcome to Mega <span className="text-sky-400 italic">mall</span>
@@ -61,11 +62,12 @@ export default function Hero() {
               </Link>
             </Button>
           </div>
+          <About />
         </section>
 
         <section
           id="products"
-          className="flex flex-col items-start my-8 px-4 sm:px-6 lg:px-8"
+          className="flex flex-col items-start my-8 w-full"
         >
           <h2 className="font-semibold text-center mb-10 text-2xl sm:text-3xl lg:text-4xl">
             ✨ Featured Products
