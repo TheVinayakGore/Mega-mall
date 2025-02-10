@@ -87,7 +87,7 @@ export default function Hero() {
                     width={500}
                     height={500}
                     priority
-                    className="rounded-xl w-full h-auto object-cover transition hover:scale-105"
+                    className="border rounded-xl w-full h-auto object-cover transition hover:scale-105"
                   />
                   <p className="mt-5 text-2xl font-bold text-center">
                     {product.title}

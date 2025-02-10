@@ -38,12 +38,11 @@ const cartSlice = createSlice({
       );
 
       if (itemIndex >= 0) {
-        // If item already exists, increment its quantity
         state.items[itemIndex].quantity += action.payload.quantity || 1;
       } else {
-        // If item is new, add it to the cart
         state.items.push({
           ...action.payload,
+          description: action.payload.description || "No description available", // ✅ Ensure description is saved
           quantity: action.payload.quantity || 1,
         });
       }

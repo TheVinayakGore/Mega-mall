@@ -10,11 +10,10 @@ import { MdOutlineMenu } from "react-icons/md";
 import { BsCart4 } from "react-icons/bs";
 import { Drawer, DrawerTrigger } from "@/components/ui/drawer";
 import Cart from "@/app/product/cart";
-import { useClerk, useUser } from "@clerk/nextjs";
+import { useClerk, UserButton, useUser } from "@clerk/nextjs";
 import { IoMdHelpCircleOutline } from "react-icons/io";
 import {
   Tooltip,
-  TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
@@ -74,26 +73,7 @@ const Navbar = () => {
               </Drawer>
             </li>
             <li>
-              {isSignedIn ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="hover:bg-sky-400 dark:hover:bg-sky-500 hover:text-white hover:border-sky-400 flex items-center"
-                  onClick={() => signOut()}
-                >
-                  Sign Out
-                </Button>
-              ) : (
-                <Link href="/sign-in">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center"
-                  >
-                    Sign In
-                  </Button>
-                </Link>
-              )}
+              <UserButton />
             </li>
             <li>
               <button
@@ -111,7 +91,7 @@ const Navbar = () => {
             <li>
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger>
+                  <TooltipTrigger asChild>
                     <Link
                       href="/help"
                       target="_blank"
@@ -120,9 +100,6 @@ const Navbar = () => {
                       <IoMdHelpCircleOutline />
                     </Link>
                   </TooltipTrigger>
-                  <TooltipContent>
-                    <span>Help</span>
-                  </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </li>
@@ -162,7 +139,6 @@ const Navbar = () => {
                   >
                     <Link href="/" className="flex items-center space-x-2">
                       <IoMdHelpCircleOutline className="text-xl" />
-                      <span>Help Page</span>
                     </Link>
                   </Button>
                 </li>

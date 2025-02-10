@@ -9,7 +9,6 @@ import Image from "next/image";
 import { Drawer, DrawerTrigger } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { PiHeartFill } from "react-icons/pi";
-// import Link from "next/link";
 import { FaRegStar, FaStar } from "react-icons/fa6";
 import { Input } from "@/components/ui/input";
 import LoadingBar from "@/components/LoadingBar";
@@ -23,6 +22,16 @@ import {
 import Cart from "@/app/product/cart";
 import Navbar from "@/components/Navbar";
 import toast from "react-hot-toast";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { FaMinus, FaPlus } from "react-icons/fa";
+// import Link from "next/link";
 
 interface Product {
   _id: string;
@@ -54,6 +63,8 @@ const ProductDetails = () => {
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [liked, setLiked] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   const checkPincode = async () => {
     try {
@@ -102,12 +113,9 @@ const ProductDetails = () => {
         color: selectedColor, // Pass the selected color
         size: selectedSize, // Pass the selected size (ensure `selectedSize` is set)
       };
-      dispatch(addItem(cartItem)); // Dispatch to redux store
+      dispatch(addItem(cartItem));
+      toast.success("Added to cart!");
     }
-  };
-
-  const handleToast = () => {
-    toast.success(`Order Successful for ${product.title}!`);
   };
 
   const handleLikeClick = () => {
@@ -164,21 +172,79 @@ const ProductDetails = () => {
                   <Cart />
                 </Drawer>
               </div>
-              <Button
-                className="text-base hover:bg-yellow-500 h-14 w-full"
-                onClick={handleToast}
-              >
-                Buy Now
-              </Button>
-              {/* <Button
-                className="text-base hover:bg-yellow-500 h-14 w-full"
-                onClick={handleToast}
-                asChild
-              >
-                <Link href="/checkout" target="_blank">
-                  Buy Now
-                </Link>
-              </Button> */}
+              <div className="w-full">
+                <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="text-base hover:bg-yellow-500 h-14 w-full">
+                      Buy Now
+                    </Button>
+                  </DialogTrigger>
+
+                  <DialogContent className="max-w-2xl mx-auto">
+                    <DialogHeader>
+                      <DialogTitle className="text-2xl font-extrabold">
+                        $ Buy Now $
+                      </DialogTitle>
+                      <DialogDescription className="text-base">
+                        Complete your purchase by selecting a payment method.
+                      </DialogDescription>
+                    </DialogHeader>
+
+                    {/* Product Details */}
+                    <div className="flex items-start">
+                      <Image
+                        src={urlFor(product.image).url()}
+                        alt={product.title}
+                        width={500}
+                        height={500}
+                        className="rounded-lg border w-52"
+                      />
+                      <div className="flex flex-col items-start justify-between px-3 mx-3 pb-3 border-b w-full h-full">
+                        <h2 className="text-lg font-bold">{product.title}</h2>
+                        <p className="text-sm opacity-70 my-2">
+                          {product.description.slice(0, 210)}...
+                        </p>
+                        <div className="flex items-end justify-between w-full">
+                          <p className="text-2xl font-bold text-green-600">
+                            ₹{product.price * quantity}
+                          </p>
+                          <div className="flex items-center gap-3 mt-4">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() =>
+                                setQuantity((prev) => Math.max(1, prev - 1))
+                              }
+                            >
+                              <FaMinus />
+                            </Button>
+                            <span className="text-lg font-bold">
+                              {quantity}
+                            </span>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => setQuantity((prev) => prev + 1)}
+                            >
+                              <FaPlus />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Payment Options */}
+                    <div className="flex gap-3 w-full">
+                      <Button className="bg-blue-500 hover:bg-blue-600 text-white w-full">
+                        Pay with Razorpay
+                      </Button>
+                      <Button className="bg-yellow-400 hover:bg-yellow-500 text-black w-full">
+                        Pay with PayPal
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
           </section>
           <section

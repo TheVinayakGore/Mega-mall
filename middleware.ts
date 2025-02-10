@@ -4,7 +4,6 @@ export default clerkMiddleware();
 
 export const config = {
   matcher: [
-    "/", // Protect the homepage
-    "/((?!api|_next|static|favicon.ico|.*\\.svg|.*\\.png|.*\\.css|.*\\.js).*)",
+    "/((?!_next|.*\\..*|api/auth/callback|api/webhooks).*)", // Protect all pages except Next.js internal & API routes
   ],
 };
