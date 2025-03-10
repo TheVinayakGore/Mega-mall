@@ -78,7 +78,7 @@ const Cart = () => {
           </div>
         ) : (
           <div className="flex flex-col flex-wrap py-5 w-full h-[30rem]">
-            <ul className="flex flex-col p-3 overflow-auto h-full">
+            <ul className="flex items-start p-3 overflow-auto h-full">
               {cartItems.map((item) => (
                 <li key={item.id} className="flex flex-col gap-5 p-2 w-1/2">
                   <div className="flex items-start p-2 border border-zinc-700 rounded-md w-full">
@@ -97,7 +97,7 @@ const Cart = () => {
                         {item.title}
                       </DrawerTitle>
                       <DrawerDescription>
-                        {item.title} is an amazing product!
+                        {item.description} is an amazing product!
                       </DrawerDescription>
 
                       <div className="flex items-center justify-between text-sm mt-3 w-full">
@@ -151,7 +151,7 @@ const Cart = () => {
         )}
 
         {/* 🏁 Checkout & Clear Cart Actions */}
-        <div className="flex items-center p-3 bg-zinc-200 dark:bg-zinc-900 w-full">
+        <div className="flex items-center p-5 bg-zinc-200 dark:bg-zinc-900 w-full">
           <DrawerFooter>
             <DrawerClose className="absolute top-2 right-2">
               <Button

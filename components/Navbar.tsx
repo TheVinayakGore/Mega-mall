@@ -10,7 +10,7 @@ import { MdOutlineMenu } from "react-icons/md";
 import { BsCart4 } from "react-icons/bs";
 import { Drawer, DrawerTrigger } from "@/components/ui/drawer";
 import Cart from "@/app/product/cart";
-import { useClerk, UserButton, useUser } from "@clerk/nextjs";
+// import { useClerk, UserButton, useUser } from "@clerk/nextjs";
 import { IoMdHelpCircleOutline } from "react-icons/io";
 import {
   Tooltip,
@@ -20,8 +20,8 @@ import {
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
-  const { signOut } = useClerk();
-  const { isSignedIn } = useUser();
+  // const { signOut } = useClerk();
+  // const { isSignedIn } = useUser();
 
   const [mounted, setMounted] = useState(false);
 
@@ -72,20 +72,17 @@ const Navbar = () => {
                 <Cart />
               </Drawer>
             </li>
-            <li>
-              <UserButton />
-            </li>
+            <li>{/* <UserButton /> */}</li>
             <li>
               <button
                 className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-full"
                 onClick={toggleTheme}
               >
                 {theme === "light" ? (
-                  <SunIcon className="h-[1.2rem] w-[1.2rem]" />
+                  <SunIcon className="w-5 h-5" />
                 ) : (
-                  <MoonIcon className="h-[1.2rem] w-[1.2rem]" />
+                  <MoonIcon className="w-5 h-5" />
                 )}
-                <span className="sr-only">Toggle theme</span>
               </button>
             </li>
             <li>
@@ -142,7 +139,7 @@ const Navbar = () => {
                     </Link>
                   </Button>
                 </li>
-                <li>
+                {/* <li>
                   {isSignedIn ? (
                     <Button
                       variant="outline"
@@ -162,7 +159,7 @@ const Navbar = () => {
                       </Button>
                     </Link>
                   )}
-                </li>
+                </li> */}
               </ul>
             </SheetContent>
           </Sheet>

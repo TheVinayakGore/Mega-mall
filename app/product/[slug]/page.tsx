@@ -180,69 +180,74 @@ const ProductDetails = () => {
                     </Button>
                   </DialogTrigger>
 
-                  <DialogContent className="max-w-2xl mx-auto">
-                    <DialogHeader>
-                      <DialogTitle className="text-2xl font-extrabold">
-                        $ Buy Now $
-                      </DialogTitle>
-                      <DialogDescription className="text-base">
-                        Complete your purchase by selecting a payment method.
-                      </DialogDescription>
-                    </DialogHeader>
+                  <div className="flex items-center m-auto gap-7 w-full">
+                    <DialogContent className="max-w-3xl mx-auto w-full">
+                      <DialogHeader>
+                        <DialogTitle className="text-4xl font-extrabold">
+                          $ Buy Now $
+                        </DialogTitle>
+                        <DialogDescription className="text-base">
+                          Complete your purchase by selecting a payment method.
+                        </DialogDescription>
+                      </DialogHeader>
 
-                    {/* Product Details */}
-                    <div className="flex items-start">
-                      <Image
-                        src={urlFor(product.image).url()}
-                        alt={product.title}
-                        width={500}
-                        height={500}
-                        className="rounded-lg border w-52"
-                      />
-                      <div className="flex flex-col items-start justify-between px-3 mx-3 pb-3 border-b w-full h-full">
-                        <h2 className="text-lg font-bold">{product.title}</h2>
-                        <p className="text-sm opacity-70 my-2">
-                          {product.description.slice(0, 210)}...
-                        </p>
-                        <div className="flex items-end justify-between w-full">
-                          <p className="text-2xl font-bold text-green-600">
-                            ₹{product.price * quantity}
+                      {/* Product Details */}
+                      <div className="flex items-start justify-start m-auto h-full">
+                        <Image
+                          src={urlFor(product.image).url()}
+                          alt={product.title}
+                          width={500}
+                          height={500}
+                          className="rounded-lg border w-64"
+                        />
+                        <div className="flex flex-col items-start justify-between ml-6 pb-3 border-b w-full h-full">
+                          <h2 className="text-3xl font-bold leading-none">
+                            {product.title}
+                          </h2>
+                          <p className="text-base opacity-70 my-2">
+                            {product.description.slice(0, 250)}...
                           </p>
-                          <div className="flex items-center gap-3 mt-4">
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() =>
-                                setQuantity((prev) => Math.max(1, prev - 1))
-                              }
-                            >
-                              <FaMinus />
-                            </Button>
-                            <span className="text-lg font-bold">
-                              {quantity}
-                            </span>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => setQuantity((prev) => prev + 1)}
-                            >
-                              <FaPlus />
-                            </Button>
+                          <div className="flex items-end justify-between w-full">
+                            <p className="text-2xl font-bold text-green-600">
+                              ₹{product.price * quantity}
+                            </p>
+                            <p className="text-xl font-medium text-blue-600 overflow-auto w-10">
+                              {product.size}
+                            </p>
+                            <p className="text-xl font-medium overflow-auto w-10">
+                              {product.color}
+                            </p>
+                            <div className="flex items-center gap-3 mt-4">
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() =>
+                                  setQuantity((prev) => Math.max(1, prev - 1))
+                                }
+                              >
+                                <FaMinus />
+                              </Button>
+                              <span className="text-lg font-bold">
+                                {quantity}
+                              </span>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => setQuantity((prev) => prev + 1)}
+                              >
+                                <FaPlus />
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Payment Options */}
-                    <div className="flex gap-3 w-full">
-                      <Button className="bg-blue-500 hover:bg-blue-600 text-white w-full">
-                        Pay with Razorpay
+                      {/* Checkout Button */}
+                      <Button className="p-7 text-xl font-bold bg-blue-500 hover:bg-blue-600 text-white w-full">
+                        Checkout Now
                       </Button>
-                      <Button className="bg-yellow-400 hover:bg-yellow-500 text-black w-full">
-                        Pay with PayPal
-                      </Button>
-                    </div>
-                  </DialogContent>
+                    </DialogContent>
+                  </div>
                 </Dialog>
               </div>
             </div>

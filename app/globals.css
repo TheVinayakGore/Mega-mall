@@ -72,30 +72,6 @@
   animation: fadeIn 1s ease-in-out;
 }
 
-.animate-slide-up {
-  animation: slideUp 0.5s ease-in-out forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
 /* styles/global.css or styles/LoadingBar.module.css */
 
 @keyframes loadingAnimation {

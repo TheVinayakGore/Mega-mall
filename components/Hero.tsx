@@ -1,133 +1,84 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { client } from "@/sanity/lib/client";
-import { urlFor } from "@/sanity/lib/image";
-import Image from "next/image";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { MdKeyboardDoubleArrowDown } from "react-icons/md";
 import About from "./About";
+import { Button } from "@/components/ui/button";
+import { Typewriter } from "react-simple-typewriter";
 
-interface Product {
-  _id: string;
-  title: string;
-  slug: {
-    current: string;
-  };
-  description: string;
-  price: number;
-  image: {
-    asset: {
-      _id: string;
-      url: string;
-    };
-  };
-  color: string[];
-}
+const colors = [
+  "text-amber-400",
+  "text-sky-400",
+  "text-fuchsia-400",
+  "text-green-400",
+  "text-purple-400",
+  "text-red-400",
+  "text-yellow-400",
+];
 
 export default function Hero() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [currentColor, setCurrentColor] = useState(colors[0]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const productsData = await client.fetch<Product[]>(
-        `*[_type == "product"]`
-      );
-      setProducts(productsData);
-    };
-    fetchProducts();
+    const interval = setInterval(() => {
+      setCurrentColor((prevColor) => {
+        const currentIndex = colors.indexOf(prevColor);
+        const nextIndex = (currentIndex + 1) % colors.length;
+        return colors[nextIndex];
+      });
+    }, 4000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <>
-      <main className="animate-fade-in delay-500 max-w-7xl">
-        <section className="flex flex-col items-center justify-center w-full">
-          <div className="py-6 text-center">
-            <h1 className="font-bold text-xl sm:text-4xl md:text-6xl lg:text-8xl">
-              Welcome to Mega <span className="text-sky-400 italic">mall</span>
-            </h1>
-            <p className="mt-2 text-xs sm:text-lg md:text-2xl lg:text-4xl">
-              Shop the latest trends and deals!
-            </p>
-          </div>
-          <div className="mt-8">
-            <Button
-              asChild
-              className="bg-sky-400 text-white px-4 py-2 transition hover:scale-105 rounded-lg hover:bg-sky-500"
-            >
-              <Link href="/#products">
-                Start Shopping{" "}
-                <MdKeyboardDoubleArrowDown className="text-xl mt-1 ml-2 animate-bounce" />
-              </Link>
+    <main className="animate-fade-in delay-50 flex flex-col items-center justify-center m-auto pt-32 w-full">
+      <section className="flex flex-col items-center justify-center text-center gap-10 w-full">
+        <div className="flex items-center m-auto text-3xl sm:text-5xl lg:text-8xl font-medium">
+          Welcome to{" "}
+          <span className="ml-3">
+            Mega <span className="italic text-sky-400">mall</span>
+          </span>
+        </div>
+        <h1 className="text-7xl sm:text-9xl md:text-[12rem] font-medium bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-fuchsia-500 h-full pb-5">
+          Shop the latest <br />
+          <span
+            className={`font-semibold transition-colors duration-1000 ${currentColor}`}
+          >
+            <Typewriter
+              words={[
+                "Trends",
+                "Deals",
+                "Fashion",
+                "Electronics",
+                "Accessories",
+                "Essentials",
+                "Luxury",
+                "Gadgets",
+                "Home Goods",
+                "Beauty",
+              ]}
+              loop={Infinity}
+              cursor
+              cursorStyle="|"
+              typeSpeed={70}
+              deleteSpeed={50}
+              delaySpeed={3000}
+            />
+          </span>
+        </h1>
+        <div className="flex flex-col items-center gap-5 mt-5">
+          <Link href="/#products">
+            <Button className="flex items-center gap-2 text-xl bg-gradient-to-r from-sky-500 via-purple-500 to-pink-500 hover:from-sky-600 hover:via-purple-600 hover:to-pink-600 text-white px-14 py-7 border-2 border-sky-400 rounded-full shadow-lg hover:shadow-xl transition-transform transform hover:scale-105">
+              Start Shopping
             </Button>
-          </div>
-          <About />
-        </section>
-
-        <section
-          id="products"
-          className="flex flex-col items-start my-8 w-full"
-        >
-          <h2 className="font-semibold text-center mb-10 text-2xl sm:text-3xl lg:text-4xl">
-            ✨ Featured Products
-          </h2>
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product, index) => (
-              <div
-                key={product._id}
-                className="flex justify-center transition hover:scale-105"
-              >
-                <Card
-                  className={`p-5 shadow-lg hover:shadow-xl transition-all hover:scale-110 delay-300 ease-in-out w-full max-w-sm animate-slide-up delay-${index * 100}`}
-                >
-                  <Image
-                    src={urlFor(product.image).url()}
-                    alt={product.title}
-                    width={500}
-                    height={500}
-                    priority
-                    className="border rounded-xl w-full h-auto object-cover transition hover:scale-105"
-                  />
-                  <p className="mt-5 text-2xl font-bold text-center">
-                    {product.title}
-                  </p>
-                  <p className="flex flex-col items-center text-green-500 text-2xl text-center">
-                    ₹{product.price}
-                  </p>
-                  <div className="flex items-center justify-center m-auto w-full">
-                    Colors :{" "}
-                    {product.color && product.color.length > 0 && (
-                      <div className="m-2 flex justify-center gap-[1px]">
-                        {product.color.map((item) => (
-                          <div
-                            key={product._id}
-                            className="w-5 h-5 border border-zinc-200 dark:border-zinc-800 rounded-full"
-                            style={{ backgroundColor: item }}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <Button
-                    className="mt-4 transition hover:scale-105 w-full"
-                    asChild
-                  >
-                    <Link
-                      href={`/product/${product.slug.current}`}
-                      passHref
-                      target="_blank"
-                      rel="noopener"
-                    >
-                      View Product
-                    </Link>
-                  </Button>
-                </Card>
-              </div>
-            ))}
-          </div>
-        </section>
-      </main>
-    </>
+          </Link>
+          <MdKeyboardDoubleArrowDown className="text-7xl animate-bounce text-sky-500 dark:text-sky-400" />
+        </div>
+      </section>
+      <section className="flex flex-col items-center m-auto gap-40 p-20 w-full h-full">
+        <About />
+      </section>
+    </main>
   );
 }
