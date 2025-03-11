@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Cart from "@/app/product/cart";
-import Navbar from "@/components/Navbar";
 import toast from "react-hot-toast";
 import {
   Dialog,
@@ -133,7 +132,6 @@ const ProductDetails = () => {
 
   return (
     <>
-      <Navbar />
       <main className="flex flex-col items-start py-24 px-20 w-full h-full">
         <div className="flex items-start justify-between gap-10 w-full h-full">
           <section id="ID1" className="sticky top-24 w-[70rem] h-full">
@@ -325,7 +323,7 @@ const ProductDetails = () => {
             </div>
             <div className="flex items-center justify-between border-t border-b border-zinc-700 py-4 my-5 w-full">
               <p className="flex items-end space-x-3 title-font font-medium text-2xl text-black dark:text-white">
-                ₹{product.price}
+                ₹{product.price.toFixed(2)}
               </p>
               <div className="w-1/2">
                 <div className="flex max-w-sm items-center space-x-2 w-full">

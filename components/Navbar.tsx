@@ -53,7 +53,7 @@ const Navbar = () => {
             className="w-auto"
           />
           <span className="ml-3 text-xl md:text-2xl font-bold">
-            Mega <span className="text-sky-400 italic">mall</span>
+            Menzy <span className="text-sky-400 italic">Cart</span>
           </span>
         </Link>
         <div className="flex items-center space-x-4">

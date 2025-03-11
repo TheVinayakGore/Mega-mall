@@ -57,6 +57,11 @@ export default defineType({
       type: "number",
     }),
     defineField({
+      title: "MRP",
+      name: "mrp",
+      type: "number",
+    }),
+    defineField({
       title: "Image",
       name: "image",
       type: "image",

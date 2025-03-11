@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import ReduxProvider from "@/components/ReduxProvider";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 // import { ClerkProvider } from "@clerk/nextjs";
 
 const geistSans = localFont({
@@ -21,7 +22,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Mega Mall - Sale is Live ! | Shop Now !",
+  title: "Menzy Cart - Sale is Live ! | Shop Now !",
   description: "Created with love by Vinayak Gore",
 };
 
@@ -30,24 +31,25 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <>
       {/* <ClerkProvider>
       </ClerkProvider> */}
-        <html lang="en" suppressHydrationWarning>
-          <body
-            className={`${geistSans.variable} ${geistMono.variable} text-zinc-800 dark:text-zinc-200 antialiased`}
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} text-zinc-800 dark:text-zinc-200 antialiased`}
+        >
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
           >
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="light"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <Toaster />
-              <ReduxProvider>
-                {children}
-                <Footer />
-              </ReduxProvider>
-            </ThemeProvider>
-          </body>
-        </html>
+            <Toaster />
+            <ReduxProvider>
+              <Navbar />
+              {children}
+              <Footer />
+            </ReduxProvider>
+          </ThemeProvider>
+        </body>
+      </html>
     </>
   );
 }

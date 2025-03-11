@@ -12,6 +12,7 @@ interface Product {
   };
   description: string;
   price: number;
+  mrp: number;
   image: {
     asset: {
       _id: string;
@@ -47,6 +48,7 @@ const ProductsList = () => {
               image={urlFor(product.image).url()}
               name={product.title}
               price={product.price}
+              mrp={product.mrp}
               description={product.description}
               slug={product.slug.current}
             />
