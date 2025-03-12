@@ -6,8 +6,18 @@ export default defineType({
   type: "document",
   fields: [
     defineField({
-      title: "Model",
-      name: "model",
+      title: "Brand",
+      name: "brand",
+      type: "string",
+    }),
+    defineField({
+      title: "Category",
+      name: "category",
+      type: "string",
+    }),
+    defineField({
+      title: "Tag",
+      name: "tag",
       type: "string",
     }),
     defineField({
@@ -70,9 +80,17 @@ export default defineType({
       },
     }),
     defineField({
-      title: "Category",
-      name: "category",
-      type: "string",
+      title: "Gallery",
+      name: "gallery",
+      type: "array",
+      of: [
+        {
+          type: "image",
+          options: {
+            hotspot: true,
+          },
+        },
+      ],
     }),
     defineField({
       title: "Likes",

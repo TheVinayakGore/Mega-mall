@@ -39,7 +39,7 @@ const ProductsList = () => {
     <>
       <main id="products" className="flex flex-col items-start my-8 w-full">
         <h2 className="font-semibold text-center mb-10 text-2xl sm:text-3xl lg:text-4xl">
-          ✨ Featured Products
+          ✦ Latest Products
         </h2>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
           {products.map((product) => (

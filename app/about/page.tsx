@@ -14,7 +14,7 @@ const About = () => {
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="flex flex-col items-center justify-center m-auto gap-60 p-28 pt-60 w-full h-full"
+        className="flex flex-col items-center justify-center m-auto gap-60 p-28 pt-36 w-full h-full"
       >
         <Card className="flex flex-col md:flex-row items-start justify-start gap-10 bg-transparent shadow-none border-none w-full h-full">
           {/* Left Section: Video */}

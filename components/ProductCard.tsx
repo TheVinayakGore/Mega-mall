@@ -26,7 +26,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         href={`/product/${slug}`}
         target="_blank"
         rel="noopener"
-        className="group relative bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow h-full"
+        className="group relative bg-white dark:bg-zinc-800 border-2 hover:border-sky-400 rounded-lg overflow-hidden shadow-md hover:shadow-lg hover:shadow-sky-200 dark:hover:shadow-sky-800 transition-shadow h-full"
       >
         <Image
           src={image}
