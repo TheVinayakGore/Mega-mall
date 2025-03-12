@@ -74,7 +74,7 @@ const ProductDetails = () => {
   const count = useMotionValue(0);
   const animatedPrice = useTransform(
     count,
-    (latest) => `₹${latest.toFixed(2)}`
+    (latest) => `₹ ${latest.toFixed(2)}`
   );
 
   useEffect(() => {
@@ -267,8 +267,8 @@ const ProductDetails = () => {
                   />
                   {product.tag && (
                     <div
-                      className={`absolute top-0 left-0 ${
-                        product.tag && "bg-sky-400"
+                      className={`absolute top-0 left-0 uppercase ${
+                        product.tag && "bg-sky-500"
                       } text-lg text-white p-2 px-7 rounded-tl-md rounded-br-xl`}
                     >
                       {product.tag}
@@ -335,21 +335,32 @@ const ProductDetails = () => {
                     </Button>
                   </motion.div>
                 </DialogTrigger>
-                <DialogContent className="max-w-3xl mt-10 p-10 border border-sky-500">
+                <DialogContent className="max-w-3xl mt-10 border border-sky-500">
                   <DialogHeader>
-                    <DialogTitle className="text-3xl font-semibold">
+                    <DialogTitle className="text-3xl leading-none font-semibold">
                       Product Preview
                     </DialogTitle>
                   </DialogHeader>
-                  <div className="space-y-4">
+                  <div className="space-y-4 p-5">
                     <div className="flex items-start justify-start gap-7 m-auto w-full h-80">
-                      <Image
-                        src={urlFor(product.gallery[0]).url()}
-                        alt={product.title}
-                        width={200}
-                        height={200}
-                        className="rounded-md border border-sky-500 w-1/2 h-full"
-                      />
+                      <div className="relative w-1/2 h-full">
+                        <Image
+                          src={urlFor(product.gallery[0]).url()}
+                          alt={product.title}
+                          width={200}
+                          height={200}
+                          className="rounded-md border border-sky-500 w-full h-full"
+                        />
+                        {product.tag && (
+                          <div
+                            className={`absolute top-0 left-0 uppercase ${
+                              product.tag && "bg-sky-500"
+                            } text-sm text-white p-2 px-5 rounded-tl-md rounded-br-xl`}
+                          >
+                            {product.tag}
+                          </div>
+                        )}
+                      </div>
                       <div className="flex flex-col items-start justify-between w-1/2 h-full">
                         <div className="flex flex-col w-full">
                           <h1 className="text-3xl title-font font-semibold leading-none">
@@ -392,10 +403,8 @@ const ProductDetails = () => {
                         </div>
                         <div className="flex items-center justify-between text-xl font-medium p-3 border border-sky-500 rounded-md w-full">
                           <div className="flex items-center gap-2">
-                            <span className="text-2xl">₹</span>
-                            <span className="text-sky-400">
-                              {product.price.toFixed(2)}
-                            </span>
+                            <span className="text-4xl">₹</span>
+                            <span>{product.price.toFixed(2)}</span>
                           </div>
                           <div className="flex items-center justify-start gap-3">
                             <Button
@@ -451,7 +460,7 @@ const ProductDetails = () => {
                       <Button
                         onClick={handlePayment}
                         type="button"
-                        className="text-base py-6 font-medium w-full text-white bg-sky-400 hover:bg-sky-500"
+                        className="text-lg py-6 font-medium w-full text-white bg-sky-500 hover:bg-sky-600"
                       >
                         Proceed to Payment
                       </Button>

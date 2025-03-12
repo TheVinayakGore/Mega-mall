@@ -1,7 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useTheme } from "next-themes";
-import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -55,7 +53,6 @@ type Product = {
 };
 
 const Page = () => {
-  const { theme, setTheme } = useTheme();
   const [products, setProducts] = useState<Product[]>([]);
   const [newProduct, setNewProduct] = useState<Product>({
     id: 0,
@@ -76,12 +73,6 @@ const Page = () => {
   const [isCardContentVisible, setIsCardContentVisible] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Save products to localStorage whenever products state changes
   useEffect(() => {
@@ -114,15 +105,6 @@ const Page = () => {
   useEffect(() => {
     console.log("Current products state:", products);
   }, [products]);
-
-  // Toggle Theme Function
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
-
-  if (!mounted) {
-    return null;
-  }
 
   // Create a new product
   const handleCreateProduct = () => {
@@ -199,18 +181,7 @@ const Page = () => {
 
   return (
     <>
-      <button
-        className="absolute top-3 right-5 z-50 p-3 hover:bg-zinc-100 dark:hover:bg-zinc-900 border shadow-lg rounded-full"
-        onClick={toggleTheme}
-      >
-        {theme === "light" ? (
-          <SunIcon className="w-5 h-5" />
-        ) : (
-          <MoonIcon className="w-5 h-5" />
-        )}
-      </button>
-
-      <main className="relative p-20 h-screen">
+      <main className="relative p-28">
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -564,7 +535,7 @@ const Page = () => {
 
                       {/* Price */}
                       <TableCell className="w-24 border-r h-28">
-                        {product.price ? `$${product.price}` : "-"}
+                        {product.price ? `₹ ${product.price}` : "-"}
                       </TableCell>
 
                       {/* Tag */}
@@ -665,7 +636,7 @@ const Page = () => {
 
                       {/* Actions */}
                       <TableCell className="w-20 border-r h-28 overflow-auto">
-                        <ul className="flex flex-col items-start gap-2 whitespace-nowrap overflow-auto h-full">
+                        <ul className="flex flex-col items-center gap-2 whitespace-nowrap overflow-auto h-full">
                           <li>
                             <Button
                               onClick={() => {
@@ -699,13 +670,13 @@ const Page = () => {
 
         {/* Dialog to show product details */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-7xl w-full p-10 gap-10 shadow-2xl rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 h-[90vh] overflow-auto">
+          <DialogContent className="max-w-7xl w-full p-10 mt-10 gap-10 shadow-2xl rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 h-[45rem] overflow-auto">
             {selectedProduct && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
-                className="grid grid-cols-1 md:grid-cols-2 gap-10"
+                className="grid grid-cols-1 md:grid-cols-2 gap-5"
               >
                 {/* Header Section */}
                 <DialogHeader className="col-span-2">
@@ -713,30 +684,30 @@ const Page = () => {
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.2 }}
-                    className="flex items-start justify-between w-full"
+                    className="flex flex-col items-start gap-1 w-full"
                   >
-                    <div className="flex flex-col items-start gap-2 w-full">
-                      <DialogTitle className="text-4xl font-bold text-gray-900 dark:text-gray-100">
-                        {selectedProduct?.title}
-                      </DialogTitle>
-                      <DialogDescription className="opacity-80 text-lg text-gray-700 dark:text-gray-300">
-                        Get detailed insights about this product.
-                      </DialogDescription>
-                    </div>
-                    <span className="text-center text-md text-white bg-sky-400 rounded-lg p-2 w-40">
-                      {selectedProduct.tag}
-                    </span>
+                    {selectedProduct.tag && (
+                      <span className="text-center text-xs bg-gradient-to-br from-blue-500 to-sky-400 text-white rounded p-2 leading-none px-3">
+                        {selectedProduct.tag}
+                      </span>
+                    )}
+                    <DialogTitle className="text-4xl font-bold text-gray-900 dark:text-gray-100">
+                      {selectedProduct?.title}
+                    </DialogTitle>
+                    <DialogDescription className="opacity-80 text-lg text-gray-700 dark:text-gray-300">
+                      Get detailed insights about this product.
+                    </DialogDescription>
                   </motion.div>
                 </DialogHeader>
 
                 {/* Left Section: Product Info */}
-                <div className="space-y-8">
+                <div className="space-y-5">
                   {/* Description */}
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     className="p-6 rounded-lg bg-gray-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700"
                   >
-                    <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                    <p className="text-xl uppercase text-sky-500 font-semibold mb-5">
                       Description
                     </p>
                     <p className="text-sm opacity-80 text-gray-700 dark:text-gray-300">
@@ -745,26 +716,29 @@ const Page = () => {
                   </motion.div>
 
                   {/* Price and Stock */}
-                  <div className="flex justify-between gap-4">
+                  <div className="flex justify-between gap-5">
                     <motion.div
                       whileHover={{ scale: 1.05 }}
                       className="p-6 rounded-lg bg-gray-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex-1"
                     >
-                      <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                      <p className="text-xl uppercase text-sky-500 font-semibold mb-5">
                         Price
                       </p>
-                      <p className="text-green-500 font-bold text-2xl">
-                        ${selectedProduct.price.toFixed(2)}
-                      </p>
+                      <div className="flex items-center justify-start gap-1 text-green-500 text-2xl">
+                        <span className="text-5xl">₹</span>{" "}
+                        <span className="font-bold">
+                          {selectedProduct.price.toFixed(2)}
+                        </span>
+                      </div>
                     </motion.div>
                     <motion.div
                       whileHover={{ scale: 1.05 }}
                       className="p-6 rounded-lg bg-gray-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex-1"
                     >
-                      <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                      <p className="text-xl uppercase text-sky-500 font-semibold mb-5">
                         Stock
                       </p>
-                      <p className="text-md text-gray-700 dark:text-gray-300">
+                      <p className="text-xl font-medium text-gray-700 dark:text-gray-300">
                         {selectedProduct.stock}
                       </p>
                     </motion.div>
@@ -775,7 +749,7 @@ const Page = () => {
                     whileHover={{ scale: 1.02 }}
                     className="p-6 rounded-lg bg-gray-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700"
                   >
-                    <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                    <p className="text-xl uppercase text-sky-500 font-semibold mb-5">
                       Colors
                     </p>
                     <div className="flex gap-3 items-center">
@@ -802,15 +776,15 @@ const Page = () => {
                     whileHover={{ scale: 1.02 }}
                     className="p-6 rounded-lg bg-gray-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700"
                   >
-                    <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                    <p className="text-xl uppercase text-sky-500 font-semibold mb-5">
                       Sizes
                     </p>
-                    <div className="flex gap-3 font-medium">
+                    <div className="flex gap-3 text-base font-medium">
                       {selectedProduct.sizes.map((size, index) => (
                         <motion.span
                           key={index}
                           whileHover={{ scale: 1.1 }}
-                          className="px-4 py-2 border rounded-lg shadow-md bg-gray-100 dark:bg-zinc-900 text-gray-900 dark:text-gray-100"
+                          className="flex items-center justify-center rounded-lg shadow-lg text-white hover:text-sky-500 border border-sky-500 bg-sky-500 hover:bg-transparent transition-all duration-300 w-14 h-14"
                         >
                           {size}
                         </motion.span>
@@ -820,49 +794,47 @@ const Page = () => {
                 </div>
 
                 {/* Right Section: Images */}
-                <div className="space-y-8">
+                <div className="space-y-5">
                   {/* Main Image */}
                   <motion.div
-                    initial={{ scale: 0.9 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.4 }}
+                    whileHover={{ scale: 1.02 }}
                     className="p-6 rounded-lg bg-gray-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700"
                   >
-                    <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                    <p className="text-xl uppercase text-sky-500 font-semibold mb-5">
                       Image
                     </p>
-                    <Image
-                      src={selectedProduct.image}
-                      alt={selectedProduct.title || "Product Image"}
-                      width={500}
-                      height={500}
-                      className="w-full h-64 object-cover rounded-md border shadow-xl"
-                    />
+                    <motion.div whileHover={{ scale: 1.02 }}>
+                      <Image
+                        src={selectedProduct.image}
+                        alt={selectedProduct.title || "Product Image"}
+                        width={2000}
+                        height={2000}
+                        className="w-full h-full rounded-lg border shadow-xl"
+                      />
+                    </motion.div>
                   </motion.div>
 
                   {/* Gallery */}
                   <motion.div
-                    initial={{ scale: 0.9 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.4, delay: 0.2 }}
-                    className="p-6 rounded-lg bg-gray-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700"
+                    whileHover={{ scale: 1.02 }}
+                    className="rounded-lg bg-gray-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 w-full"
                   >
-                    <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                    <p className="p-6 pb-0 text-xl uppercase text-sky-500 font-semibold">
                       Gallery
                     </p>
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="flex items-start gap-7 w-full h-60 p-6 overflow-x-auto">
                       {selectedProduct.gallery.map((url, index) => (
                         <motion.div
                           key={index}
                           whileHover={{ scale: 1.1 }}
-                          className="overflow-hidden rounded-md border shadow-md"
+                          className="flex-shrink-0 rounded-md border shadow-md w-auto h-full"
                         >
                           <Image
                             src={url}
                             alt={`Gallery ${index + 1}`}
                             width={500}
                             height={500}
-                            className="w-full h-24 object-cover"
+                            className="w-auto h-full rounded-md"
                           />
                         </motion.div>
                       ))}

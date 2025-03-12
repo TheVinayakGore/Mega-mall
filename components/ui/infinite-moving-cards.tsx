@@ -103,11 +103,12 @@ export const InfiniteMovingCards = ({
                 </div>
               </div>
               <div className="flex items-center justify-start gap-3 p-4 w-full">
-                <p className="text-2xl font-bold text-sky-500 dark:text-sky-400">
-                  ${item.price.toFixed(2)}
-                </p>
+                <div className="flex items-center justify-start gap-1 text-sky-500 text-2xl">
+                  <span className="text-4xl">₹</span>{" "}
+                  <span className="font-bold">{item.price.toFixed(2)}</span>
+                </div>
                 <p className="text-lg opacity-60 font-light line-through">
-                  ${item.mrp.toFixed(2)}
+                  ₹{item.mrp.toFixed(2)}
                 </p>
                 <p className="text-xl font-semibold text-green-600">
                   {((1 - item.price / item.mrp) * 100).toFixed(0)}% OFF
