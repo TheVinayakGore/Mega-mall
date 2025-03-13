@@ -19,23 +19,7 @@ import {
 } from "@/components/ui/table";
 import { Trash2, Edit } from "lucide-react";
 import Image from "next/image";
-
-// Updated Product type
-type Product = {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  tag: string;
-  image: string;
-  gallery: string[];
-  stock: number;
-  slug: string;
-  rating: number;
-  reviews: string[];
-  colors: string[];
-  sizes: string[];
-};
+import { Product } from "./ProductType";
 
 interface ProductTableProps {
   products: Product[];
@@ -66,28 +50,48 @@ const ProductTable: React.FC<ProductTableProps> = ({
               <TableCaption>A list of your products.</TableCaption>
               <TableHeader>
                 <TableRow className="border-b bg-zinc-50 dark:bg-zinc-900 h-10">
-                  <TableHead className="w-40 border border-b-0">Title</TableHead>
-                  <TableHead className="w-24 border border-b-0">Price</TableHead>
-                  <TableHead className="w-32 border border-b-0">Tag</TableHead>
-                  <TableHead className="w-32 border border-b-0">Image</TableHead>
-                  <TableHead className="w-64 border border-b-0">Gallery</TableHead>
-                  <TableHead className="w-24 border border-b-0">Stock</TableHead>
+                  <TableHead className="w-40 border border-b-0">
+                    Title
+                  </TableHead>
                   <TableHead className="w-40 border border-b-0">Slug</TableHead>
-                  <TableHead className="w-20 border border-b-0">Colors</TableHead>
-                  <TableHead className="w-20 border border-b-0">Sizes</TableHead>
-                  <TableHead className="w-20 border border-b-0">Actions</TableHead>
+                  <TableHead className="w-24 border border-b-0">
+                    Price
+                  </TableHead>
+                  <TableHead className="w-32 border border-b-0">Tag</TableHead>
+                  <TableHead className="w-32 border border-b-0">
+                    Image
+                  </TableHead>
+                  <TableHead className="w-44 border border-b-0">
+                    Gallery
+                  </TableHead>
+                  <TableHead className="w-24 border border-b-0">
+                    Stock
+                  </TableHead>
+                  <TableHead className="w-20 border border-b-0">
+                    Colors
+                  </TableHead>
+                  <TableHead className="w-20 border border-b-0">
+                    Sizes
+                  </TableHead>
+                  <TableHead className="w-20 border border-b-0">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="border-b whitespace-nowrap overflow-auto">
                 {products.map((product) => (
-                  <TableRow
-                    key={product.id}
-                    className="h-28"
-                    onClick={() => openProductDialog(product)}
-                  >
+                  <TableRow key={product.id} className="h-28">
                     {/* Title */}
-                    <TableCell className="w-40 border-l border-r h-28">
+                    <TableCell
+                      onClick={() => openProductDialog(product)}
+                      className="w-40 border-l border-r hover:text-blue-500 hover:underline underline-offset-8 cursor-pointer h-28"
+                    >
                       {product.title || "-"}
+                    </TableCell>
+
+                    {/* Slug */}
+                    <TableCell className="w-40 border-r h-28">
+                      {product.slug || "-"}
                     </TableCell>
 
                     {/* Price */}
@@ -122,7 +126,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
                     </TableCell>
 
                     {/* Gallery */}
-                    <TableCell className="w-64 whitespace-nowrap overflow-auto border-r h-28">
+                    <TableCell className="w-44 whitespace-nowrap overflow-auto border-r h-28">
                       {product.gallery && product.gallery.length > 0 ? (
                         product.gallery.map((url, index) => (
                           <Image
@@ -150,11 +154,6 @@ const ProductTable: React.FC<ProductTableProps> = ({
                       {product.stock ?? "-"}
                     </TableCell>
 
-                    {/* Slug */}
-                    <TableCell className="w-40 border-r h-28">
-                      {product.slug || "-"}
-                    </TableCell>
-
                     {/* Colors */}
                     <TableCell className="w-20 border-r h-28 overflow-auto">
                       <ul className="flex flex-col items-start gap-1 whitespace-nowrap overflow-auto h-full">
@@ -177,7 +176,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
 
                     {/* Sizes */}
                     <TableCell className="w-20 border-r h-28 overflow-auto">
-                      <ul className="flex flex-col items-start justify-start gap-2 whitespace-nowrap overflow-auto h-full">
+                      <ul className="flex flex-col items-start justify-start gap-3 whitespace-nowrap overflow-auto h-full">
                         {product.sizes && product.sizes.length > 0
                           ? product.sizes.map((size, index) => (
                               <li
@@ -193,7 +192,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
 
                     {/* Actions */}
                     <TableCell className="w-20 border-r h-28 overflow-auto">
-                      <ul className="flex flex-col items-center gap-2 whitespace-nowrap overflow-auto h-full">
+                      <ul className="flex flex-col items-center gap-3 whitespace-nowrap overflow-auto h-full">
                         <li>
                           <Button
                             onClick={() => {
