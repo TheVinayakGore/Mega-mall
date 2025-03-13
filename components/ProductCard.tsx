@@ -6,15 +6,20 @@ import Link from "next/link";
 interface ProductCardProps {
   image: string;
   name: string;
+  category: string;
+  brand: string;
+  tag: string;
   price: number;
   mrp: number;
   description: string;
-  slug?: string; // Optional slug for the product link
+  slug: string;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
   image,
   name,
+  brand,
+  tag,
   price,
   mrp,
   description,
@@ -26,20 +31,28 @@ const ProductCard: React.FC<ProductCardProps> = ({
         href={`/product/${slug}`}
         target="_blank"
         rel="noopener"
-        className="group relative bg-white dark:bg-zinc-800 border-2 hover:border-sky-400 rounded-lg overflow-hidden shadow-md hover:shadow-lg hover:shadow-sky-200 dark:hover:shadow-sky-800 transition-shadow h-full"
+        className="group relative bg-white dark:bg-zinc-800 border-2 hover:border-sky-400 rounded-lg overflow-hidden shadow-xl hover:shadow-sky-200 dark:hover:shadow-sky-800 transition-shadow h-full"
       >
         <Image
           src={image}
           alt={name}
           width={500}
           height={500}
-          className="w-full h-auto object-cover transition-transform group-hover:scale-105"
+          className="w-full h-auto border-b object-cover transition-transform group-hover:scale-105"
         />
+        {tag && (
+          <div
+            className={`absolute top-0 left-0 uppercase ${
+              tag === "Best Seller" ? "bg-sky-500" : "bg-teal-500"
+            } text-sm text-white p-2 px-5 rounded-tl-md rounded-br-xl`}
+          >
+            {tag}
+          </div>
+        )}
         <div className="p-4">
-          <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">
-            {name}
-          </h3>
-          <p className="text-base text-zinc-600 dark:text-zinc-400 mt-3">
+          <span className="text-sm uppercase opacity-50">{brand}</span>
+          <h3 className="text-2xl font-bold">{name}</h3>
+          <p className="text-base opacity-60 mt-3">
             {description.length > 100
               ? description.slice(0, 100) + "..."
               : description}
@@ -50,7 +63,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <span className="font-bold">{price.toFixed(2)}</span>
             </div>
             <p className="text-lg opacity-60 font-light line-through">
-            ₹{mrp.toFixed(2)}
+              ₹{mrp.toFixed(2)}
             </p>
             <p className="text-xl font-semibold text-green-600">
               {((1 - price / mrp) * 100).toFixed(0)}% OFF

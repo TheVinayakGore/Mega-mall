@@ -7,6 +7,9 @@ import ProductCard from "./ProductCard"; // Import the ProductCard component
 interface Product {
   _id: string;
   title: string;
+  category: string;
+  brand: string;
+  tag: string;
   slug: {
     current: string;
   };
@@ -47,6 +50,9 @@ const ProductsList = () => {
               key={product._id}
               image={urlFor(product.image).url()}
               name={product.title}
+              category={product.category}
+              brand={product.brand}
+              tag={product.tag}
               price={product.price}
               mrp={product.mrp}
               description={product.description}

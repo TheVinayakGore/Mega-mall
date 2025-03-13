@@ -268,7 +268,9 @@ const ProductDetails = () => {
                   {product.tag && (
                     <div
                       className={`absolute top-0 left-0 uppercase ${
-                        product.tag && "bg-sky-500"
+                        product.tag === "Best Seller"
+                          ? "bg-sky-500"
+                          : "bg-teal-500"
                       } text-lg text-white p-2 px-7 rounded-tl-md rounded-br-xl`}
                     >
                       {product.tag}
@@ -354,7 +356,9 @@ const ProductDetails = () => {
                         {product.tag && (
                           <div
                             className={`absolute top-0 left-0 uppercase ${
-                              product.tag && "bg-sky-500"
+                              product.tag === "Best Seller"
+                                ? "bg-sky-500"
+                                : "bg-teal-500"
                             } text-sm text-white p-2 px-5 rounded-tl-md rounded-br-xl`}
                           >
                             {product.tag}
@@ -368,10 +372,14 @@ const ProductDetails = () => {
                               ? product.title.slice(0, 17) + "..."
                               : product.title}
                           </h1>
-                          <div className="flex items-center justify-start gap-2 text-sm uppercase w-full h-5 my-1">
-                            <p className="text-sky-400">{product.category}</p>
-                            <span className="mb-1 opacity-30">|</span>
-                            <p className="opacity-40">{product.brand}</p>
+                          <div className="flex items-center justify-start gap-2 py-1 text-sm font-normal uppercase w-full">
+                            <p className="text-sky-500 font-medium">
+                              {product.category}
+                            </p>
+                            <span className="mb-1 opacity-50">|</span>
+                            <p className="uppercase opacity-60">
+                              {product.brand}
+                            </p>
                           </div>
                           <div className="flex">
                             <div className="flex items-center">
@@ -484,10 +492,10 @@ const ProductDetails = () => {
               <h1 className="text-4xl title-font font-semibold mb-2">
                 {product.title}
               </h1>
-              <div className="flex items-center justify-start gap-2 text-base uppercase w-full h-5 mb-1">
-                <p className="text-sky-400">{product.category}</p>
-                <span className="mb-1 opacity-30">|</span>
-                <p className="opacity-40">{product.brand}</p>
+              <div className="flex items-center justify-start gap-2 pb-1 text-base font-normal uppercase w-full">
+                <p className="text-sky-500 font-medium">{product.category}</p>
+                <span className="mb-1 opacity-50">|</span>
+                <p className="uppercase opacity-60">{product.brand}</p>
               </div>
               <div className="flex mb-3">
                 <div className="flex items-center">
