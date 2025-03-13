@@ -1,0 +1,231 @@
+"use client";
+import React from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Trash2, Edit } from "lucide-react";
+import Image from "next/image";
+
+// Updated Product type
+type Product = {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  tag: string;
+  image: string;
+  gallery: string[];
+  stock: number;
+  slug: string;
+  rating: number;
+  reviews: string[];
+  colors: string[];
+  sizes: string[];
+};
+
+interface ProductTableProps {
+  products: Product[];
+  setEditingProduct: (product: Product | null) => void;
+  handleDeleteProduct: (id: number) => void;
+  openProductDialog: (product: Product) => void;
+  setIsCardContentVisible: (visible: boolean) => void;
+}
+
+const ProductTable: React.FC<ProductTableProps> = ({
+  products,
+  setEditingProduct,
+  handleDeleteProduct,
+  openProductDialog,
+  setIsCardContentVisible,
+}) => {
+  return (
+    <>
+      {/* Products Table */}
+      <Card className="shadow-xl">
+        <CardHeader>
+          <CardTitle className="text-xl leading-none">Products</CardTitle>
+          <CardDescription>Manage your products</CardDescription>
+        </CardHeader>
+        <CardContent className="overflow-auto">
+          <div className="w-full overflow-auto">
+            <Table className="whitespace-nowrap">
+              <TableCaption>A list of your products.</TableCaption>
+              <TableHeader>
+                <TableRow className="border-b bg-zinc-50 dark:bg-zinc-900 h-10">
+                  <TableHead className="w-40 border border-b-0">Title</TableHead>
+                  <TableHead className="w-24 border border-b-0">Price</TableHead>
+                  <TableHead className="w-32 border border-b-0">Tag</TableHead>
+                  <TableHead className="w-32 border border-b-0">Image</TableHead>
+                  <TableHead className="w-64 border border-b-0">Gallery</TableHead>
+                  <TableHead className="w-24 border border-b-0">Stock</TableHead>
+                  <TableHead className="w-40 border border-b-0">Slug</TableHead>
+                  <TableHead className="w-20 border border-b-0">Colors</TableHead>
+                  <TableHead className="w-20 border border-b-0">Sizes</TableHead>
+                  <TableHead className="w-20 border border-b-0">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="border-b whitespace-nowrap overflow-auto">
+                {products.map((product) => (
+                  <TableRow
+                    key={product.id}
+                    className="h-28"
+                    onClick={() => openProductDialog(product)}
+                  >
+                    {/* Title */}
+                    <TableCell className="w-40 border-l border-r h-28">
+                      {product.title || "-"}
+                    </TableCell>
+
+                    {/* Price */}
+                    <TableCell className="w-24 border-r h-28">
+                      {product.price ? `₹ ${product.price}` : "-"}
+                    </TableCell>
+
+                    {/* Tag */}
+                    <TableCell className="w-32 border-r h-28">
+                      {product.tag || "-"}
+                    </TableCell>
+
+                    {/* Image */}
+                    <TableCell className="w-32 border-r h-28">
+                      {product.image ? (
+                        <Image
+                          src={product.image}
+                          alt={product.title || "Product Image"}
+                          width={500}
+                          height={500}
+                          className="w-auto h-14 object-cover rounded border"
+                        />
+                      ) : (
+                        <Image
+                          src="/noimage.png"
+                          alt="No Image"
+                          width={500}
+                          height={500}
+                          className="w-24 h-14"
+                        />
+                      )}
+                    </TableCell>
+
+                    {/* Gallery */}
+                    <TableCell className="w-64 whitespace-nowrap overflow-auto border-r h-28">
+                      {product.gallery && product.gallery.length > 0 ? (
+                        product.gallery.map((url, index) => (
+                          <Image
+                            key={index}
+                            src={url}
+                            alt={`Gallery ${index + 1}`}
+                            width={500}
+                            height={500}
+                            className="w-auto h-14 object-cover inline-block rounded border mr-2"
+                          />
+                        ))
+                      ) : (
+                        <Image
+                          src="/noimage.png"
+                          alt="No Image"
+                          width={500}
+                          height={500}
+                          className="w-24 h-14"
+                        />
+                      )}
+                    </TableCell>
+
+                    {/* Stock */}
+                    <TableCell className="w-24 border-r h-28">
+                      {product.stock ?? "-"}
+                    </TableCell>
+
+                    {/* Slug */}
+                    <TableCell className="w-40 border-r h-28">
+                      {product.slug || "-"}
+                    </TableCell>
+
+                    {/* Colors */}
+                    <TableCell className="w-20 border-r h-28 overflow-auto">
+                      <ul className="flex flex-col items-start gap-1 whitespace-nowrap overflow-auto h-full">
+                        {product.colors && product.colors.length > 0
+                          ? product.colors.map((color, index) => (
+                              <li
+                                key={index}
+                                className="flex items-center gap-1"
+                              >
+                                <div
+                                  className={`rounded-full mt-1 w-3 h-3`}
+                                  style={{ backgroundColor: `#${color}` }}
+                                ></div>
+                                {color}
+                              </li>
+                            ))
+                          : "-"}
+                      </ul>
+                    </TableCell>
+
+                    {/* Sizes */}
+                    <TableCell className="w-20 border-r h-28 overflow-auto">
+                      <ul className="flex flex-col items-start justify-start gap-2 whitespace-nowrap overflow-auto h-full">
+                        {product.sizes && product.sizes.length > 0
+                          ? product.sizes.map((size, index) => (
+                              <li
+                                key={index}
+                                className="flex justify-center bg-zinc-50 dark:bg-zinc-900 border w-full h-10 rounded p-2"
+                              >
+                                {size}
+                              </li>
+                            ))
+                          : "-"}
+                      </ul>
+                    </TableCell>
+
+                    {/* Actions */}
+                    <TableCell className="w-20 border-r h-28 overflow-auto">
+                      <ul className="flex flex-col items-center gap-2 whitespace-nowrap overflow-auto h-full">
+                        <li>
+                          <Button
+                            onClick={() => {
+                              setEditingProduct(product);
+                              setIsCardContentVisible(true); // Pass a boolean value directly
+                            }}
+                            variant="outline"
+                            className="hover:text-sky-500 w-full h-10"
+                          >
+                            <Edit className="h-5 w-5" />
+                          </Button>
+                        </li>
+                        <li>
+                          <Button
+                            onClick={() => handleDeleteProduct(product.id)}
+                            variant="outline"
+                            className="hover:text-red-500 w-full h-10"
+                          >
+                            <Trash2 className="h-5 w-5" />
+                          </Button>
+                        </li>
+                      </ul>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </>
+  );
+};
+
+export default ProductTable;
