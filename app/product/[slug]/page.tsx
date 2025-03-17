@@ -162,7 +162,7 @@ const ProductDetails = () => {
         quantity: 1,
         image: product.image,
         color: selectedColor, // Pass the selected color
-        size: selectedSize, // Pass the selected size (ensure `selectedSize` is set)
+        size: selectedSize, // Pass the selected size
       };
       dispatch(addItem(cartItem));
       toast.success("Added to cart!");
@@ -406,28 +406,65 @@ const ProductDetails = () => {
                             </div>
                           </div>
                           <p className="leading-relaxed text-base opacity-80 my-2">
-                            {product.description.slice(0, 190)}...
+                            {product.description.slice(0, 100)}...
                           </p>
                         </div>
-                        <div className="flex items-center justify-between text-xl font-medium p-3 border border-sky-500 rounded-md w-full">
-                          <div className="flex items-center gap-2">
-                            <span className="text-4xl">₹</span>
-                            <span>{product.price.toFixed(2)}</span>
+                        <div className="flex flex-col items-center border border-sky-500 rounded-md w-full">
+                          <div className="flex items-center justify-between px-3 py-2 border-b border-sky-500 w-full">
+                            {selectedSize && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-lg font-medium">
+                                  Size :
+                                </span>
+                                <motion.button
+                                  aria-label={`Size option ${selectedSize}`}
+                                  onClick={() => setSelectedSize(selectedSize)}
+                                  whileHover={{ scale: 0.75 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  className="rounded-md w-8 h-8 border border-sky-400 flex items-center justify-center"
+                                >
+                                  {selectedSize}
+                                </motion.button>
+                              </div>
+                            )}
+                            {selectedColor && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-lg font-medium">
+                                  Color :
+                                </span>
+                                <motion.button
+                                  aria-label={`Color option ${selectedColor}`}
+                                  onClick={() =>
+                                    setSelectedColor(selectedColor)
+                                  }
+                                  whileHover={{ scale: 0.75 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  className="rounded-md w-8 h-8 border border-sky-400"
+                                  style={{ backgroundColor: selectedColor }}
+                                />
+                              </div>
+                            )}
                           </div>
-                          <div className="flex items-center justify-start gap-3">
-                            <Button
-                              size="icon"
-                              className="text-lg font-bold bg-sky-400 hover:bg-sky-500 text-white hover:text-white"
-                            >
-                              -
-                            </Button>
-                            <span className="">1</span>
-                            <Button
-                              size="icon"
-                              className="text-lg font-bold bg-sky-400 hover:bg-sky-500 text-white hover:text-white"
-                            >
-                              +
-                            </Button>
+                          <div className="flex items-center justify-between px-3 py-2 text-xl font-medium w-full">
+                            <div className="flex items-center gap-2">
+                              <span className="text-4xl">₹</span>
+                              <span>{product.price.toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center justify-start gap-3">
+                              <Button
+                                size="icon"
+                                className="text-lg font-bold bg-sky-400 hover:bg-sky-500 text-white hover:text-white"
+                              >
+                                -
+                              </Button>
+                              <span className="">1</span>
+                              <Button
+                                size="icon"
+                                className="text-lg font-bold bg-sky-400 hover:bg-sky-500 text-white hover:text-white"
+                              >
+                                +
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </div>

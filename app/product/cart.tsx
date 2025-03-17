@@ -107,7 +107,11 @@ const Cart = () => {
                             Color:{" "}
                             <div
                               className="ml-2 border border-zinc-500 dark:border-zinc-800 rounded-full w-4 h-4"
-                              style={{ backgroundColor: item.color[0] }}
+                              style={{
+                                backgroundColor: Array.isArray(item.color)
+                                  ? item.color[0]
+                                  : item.color,
+                              }}
                             />
                           </div>
                         )}
@@ -169,25 +173,25 @@ const Cart = () => {
             <div className="flex space-x-4">
               <Button
                 asChild
-                className={`flex items-center bg-sky-500 hover:bg-sky-600 text-white ${
+                className={`flex items-center bg-sky-500 hover:bg-sky-600 text-lg text-white p-6 ${
                   cartItems.length === 0 ? "hidden" : "opacity-100"
                 }`}
               >
                 <Link href="/checkout" target="_blank">
-                  <PiShoppingBagOpenDuotone className="mr-3 h-5 w-5" />
+                  <PiShoppingBagOpenDuotone className="mr-2 h-6 w-6" />
                   Checkout Now
                 </Link>
               </Button>
               <Button
                 variant="outline"
                 onClick={handleClearCart}
-                className={`text-base border-zinc-700 hover:bg-black hover:border-zinc-500 hover:text-white ${
+                className={`text-lg border-zinc-700 hover:bg-black hover:border-zinc-500 hover:text-white p-6 ${
                   cartItems.length === 0
                     ? "opacity-20 hover:cursor-not-allowed bg-black text-white"
                     : "opacity-100"
                 }`}
               >
-                <ImBin className="mr-3 h-5 w-4" />
+                <ImBin className="mr-2 h-5 w-5" />
                 Clear Cart
               </Button>
             </div>

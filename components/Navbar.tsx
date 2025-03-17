@@ -88,8 +88,8 @@ const Navbar = () => {
           </li>
           <li className="flex items-center gap-3">
             <Drawer>
-              <DrawerTrigger asChild className="p-0 m-0">
-                <button className="relative p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-200">
+              <DrawerTrigger asChild>
+                <button className="relative p-2 -mr-3 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-200">
                   <HiOutlineShoppingCart className="h-7 w-7" />
                   <span className="absolute top-0 right-0 bg-sky-500 text-white text-xs rounded-full px-1.5 py-0.5">
                     3 {/* Replace with dynamic cart count */}

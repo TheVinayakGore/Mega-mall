@@ -17,7 +17,7 @@ export const InfiniteMovingCards = ({
     category: string;
     brand: string;
     tag: string;
-    slug?: string;
+    slug: string;
     description: string;
     price: number;
     mrp: number;
@@ -88,10 +88,10 @@ export const InfiniteMovingCards = ({
             className="relative w-[350px] max-w-full flex-shrink-0 md:w-[25rem] h-[40rem]"
           >
             <Link
-              href="/"
+              href={`/product/${item.slug}`}
               target="_blank"
               rel="noopener"
-              className="flex flex-col items-start justify-between relative rounded-xl border-2 hover:border-sky-500 bg-white dark:bg-zinc-800 shadow-xl hover:shadow-sky-200 dark:shadow-sky-800 w-full h-full"
+              className="flex flex-col items-start justify-between relative rounded-xl border-2 hover:border-sky-500 bg-white dark:bg-zinc-800 shadow-xl hover:shadow-sky-200 dark:hover:shadow-sky-800 w-full h-full"
             >
               <Image
                 src={item.image}
