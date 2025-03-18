@@ -63,7 +63,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <span className="font-bold">{price.toFixed(2)}</span>
             </div>
             <p className="text-lg opacity-60 font-light line-through">
-              ₹{mrp.toFixed(2)}
+              ₹{mrp?.toFixed(2)}
             </p>
             <p className="text-xl font-semibold text-green-600">
               {((1 - price / mrp) * 100).toFixed(0)}% OFF

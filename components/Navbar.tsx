@@ -58,20 +58,7 @@ const Navbar = () => {
             </Link>
           </li>
           <li className="flex items-center justify-center gap-5 m-auto w-full">
-            <div className="flex w-1/2 relative">
-              <Input
-                type="text"
-                placeholder="Search products"
-                className="w-full rounded-lg border dark:border-zinc-700 focus-visible:ring-sky-400 dark:focus-visible:ring-sky-400"
-              />
-              <button
-                type="submit"
-                className="absolute inset-y-0 right-0 flex items-center p-3 rounded-lg border-[0.13rem] border-sky-500 bg-transparent hover:bg-sky-500 text-sky-500 hover:text-white transition-all hover:scale-125 duration-300"
-              >
-                <FaSearch className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="flex items-center gap-4 w-60">
+            <div className="inline-flex items-center gap-4 whitespace-nowrap">
               <Link href="/about" target="_blank" className={navLinkClass}>
                 About
                 <PiArrowUpRightBold className="text-xs font-light w-2 h-2" />
@@ -84,6 +71,23 @@ const Navbar = () => {
                 FAQ
                 <PiArrowUpRightBold className="text-xs font-light w-2 h-2" />
               </Link>
+              <Link href="/adminPanel" target="_blank" className={navLinkClass}>
+                Admin Panel
+                <PiArrowUpRightBold className="text-xs font-light w-2 h-2" />
+              </Link>
+            </div>
+            <div className="flex w-[40rem] relative">
+              <Input
+                type="text"
+                placeholder="Search products"
+                className="w-full rounded-lg border dark:border-zinc-700 focus-visible:ring-sky-400 dark:focus-visible:ring-sky-400"
+              />
+              <button
+                type="submit"
+                className="absolute inset-y-0 right-0 flex items-center p-3 rounded-lg border-[0.13rem] border-sky-500 bg-transparent hover:bg-sky-500 text-sky-500 hover:text-white transition-all hover:scale-125 duration-300"
+              >
+                <FaSearch className="w-5 h-5" />
+              </button>
             </div>
           </li>
           <li className="flex items-center gap-3">

@@ -44,7 +44,7 @@ export const InfiniteMovingCards = ({
   const getSpeed = useCallback(() => {
     if (containerRef.current) {
       const duration =
-        speed === "fast" ? "20s" : speed === "normal" ? "40s" : "200s";
+        speed === "fast" ? "20s" : speed === "normal" ? "40s" : "50s";
       containerRef.current.style.setProperty("--animation-duration", duration);
     }
   }, [speed]);
@@ -133,7 +133,7 @@ export const InfiniteMovingCards = ({
                     <span className="font-bold">{item.price.toFixed(2)}</span>
                   </div>
                   <p className="text-lg opacity-60 font-light line-through">
-                    ₹{item.mrp.toFixed(2)}
+                    ₹{item.mrp?.toFixed(2)}
                   </p>
                   <p className="text-xl font-semibold text-green-600">
                     {((1 - item.price / item.mrp) * 100).toFixed(0)}% OFF

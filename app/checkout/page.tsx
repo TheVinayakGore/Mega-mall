@@ -2,13 +2,20 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { clearCart, setCartItems } from "@/redux/slices/cartSlice";
+import {
+  clearCart,
+  setCartItems,
+  incrementQuantity,
+  decrementQuantity,
+  removeItem,
+} from "@/redux/slices/cartSlice"; // Import the missing actions
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { FaShoppingCart } from "react-icons/fa";
 import { ImBin } from "react-icons/im";
+import { FaMinus, FaPlus } from "react-icons/fa6";
 
 const Checkout = () => {
   const dispatch = useDispatch();
@@ -65,12 +72,14 @@ const Checkout = () => {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center gap-10 w-full min-h-screen p-20">
-      <h1 className="text-5xl font-extrabold text-center">🛒 Checkout</h1>
-      <div className="max-w-4xl w-full bg-white dark:bg-zinc-900 p-7 rounded-xl shadow-lg border border-zinc-300 dark:border-zinc-800">
+    <main className="flex flex-col items-start justify-center gap-10 w-full min-h-screen p-20 py-40">
+      <h1 className="text-[12rem] leading-none font-extrabold text-start -mb-24">
+        🛒 Checkout
+      </h1>
+      <div className="w-full bg-white dark:bg-zinc-900 p-7 rounded-xl shadow-lg border border-zinc-300 dark:border-zinc-800">
         {/* 🚚 Shipping Details */}
-        <div className="mb-6">
-          <h2 className="text-xl font-medium mb-3">🚚 Shipping Details</h2>
+        <div className="">
+          <h2 className="text-3xl font-medium mb-10">🚚 Shipping Details</h2>
           <form className="space-y-4">
             <input
               type="text"
@@ -103,48 +112,98 @@ const Checkout = () => {
         </div>
 
         {/* 🛍️ Order Summary */}
-        <div className="mb-6">
-          <h2 className="text-xl font-medium mb-3">🛍️ Order Summary</h2>
+        <div className="my-10">
+          <h2 className="text-3xl font-medium mb-10">🛍️ Order Summary</h2>
           {cartItems.length === 0 ? (
             <p className="text-center text-gray-500">Your cart is empty 🛒</p>
           ) : (
-            <div className="space-y-4">
-              {cartItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-start justify-between p-5 border rounded-md bg-zinc-50 dark:bg-zinc-800"
-                >
-                  <div className="flex items-start gap-4">
-                    <Image
-                      src={urlFor(item.image)?.url() || "/placeholder.png"}
-                      alt={item.title}
-                      width={80}
-                      height={80}
-                      className="w-40 h-40 border border-zinc-300 dark:border-zinc-700 rounded-lg"
-                    />
-                    <div>
-                      <p className="text-lg font-medium">{item.title}</p>
-                      <p className="text-sm text-gray-500 my-1">
-                        {item.quantity} × ₹{item.price}
-                      </p>
-                      {/* ✅ Description with fallback */}
-                      <p className="text-xs font-light opacity-70">
-                        {item.description
-                          ? item.description
-                          : "No description available"}
-                      </p>
+            <>
+              <div className="grid grid-cols-2 gap-5 w-full h-full">
+                {cartItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-start justify-between p-3 border rounded-lg bg-zinc-50 dark:bg-zinc-800 w-full"
+                  >
+                    <div className="flex items-start gap-4 w-full h-full">
+                      <Image
+                        src={urlFor(item.image)?.url() || "/placeholder.png"}
+                        alt={item.title}
+                        width={2000}
+                        height={2000}
+                        className="w-60 h-auto border border-zinc-300 dark:border-zinc-700 rounded-lg"
+                      />
+                      <div className="flex flex-col items-center justify-between h-full">
+                        <div className="flex items-center justify-between w-full">
+                          <p className="text-2xl font-semibold w-full">
+                            {item.title.length > 12
+                              ? item.title.slice(0, 12) + "..."
+                              : item.title}
+                          </p>
+                          <p className="text-end text-3xl text-green-500 font-extrabold w-full">
+                            ₹{item.quantity * item.price}
+                          </p>
+                        </div>
+                        <div className="flex items-center justify-between text-xl font-bold p-2 bg-zinc-200 dark:bg-zinc-700 rounded-md my-2 w-full">
+                          <span className="">
+                            {item.quantity} × ₹{item.price}
+                          </span>
+                          {item.size && <p>Size : {item.size}</p>}
+                          {item.color && (
+                            <div className="flex items-center">
+                              Color :{" "}
+                              <div
+                                className="ml-2 rounded p-3"
+                                style={{
+                                  backgroundColor: Array.isArray(item.color)
+                                    ? item.color[0]
+                                    : item.color,
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-base">
+                          {item.description
+                            ? item.description.slice(0, 170) + "..."
+                            : "No description available"}
+                        </p>
+                        <div className="flex items-center justify-end space-x-3 w-full">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => dispatch(decrementQuantity(item.id))}
+                            className="border-zinc-800 hover:border-sky-400 hover:bg-sky-400 hover:text-white rounded-sm p-2"
+                          >
+                            <FaMinus className="w-3 h-3" />
+                          </Button>
+                          <span className="font-medium">{item.quantity}</span>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => dispatch(incrementQuantity(item.id))}
+                            className="border-zinc-800 hover:border-sky-400 hover:bg-sky-400 hover:text-white rounded-sm p-2"
+                          >
+                            <FaPlus className="w-3 h-3" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => dispatch(removeItem(item.id))}
+                            className="border-zinc-800 hover:border-red-500 hover:text-red-500 rounded-sm p-2"
+                          >
+                            <ImBin className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <p className="text-3xl text-green-500 font-extrabold">
-                    ₹{item.quantity * item.price}
-                  </p>
-                </div>
-              ))}
-              <div className="flex justify-between items-center font-bold text-lg border-t pt-3">
-                <span>Total Amount</span>
+                ))}
+              </div>
+              <div className="flex justify-between items-center font-bold text-3xl border-t mt-10 pt-5">
+                <span>💸 Payable Amount</span>
                 <span className="text-green-500">₹{totalAmount}</span>
               </div>
-            </div>
+            </>
           )}
         </div>
 

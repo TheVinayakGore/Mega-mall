@@ -57,7 +57,7 @@ const Cart = () => {
 
   const handleClearCart = () => {
     dispatch(clearCart());
-    toast.success("🗑️ Cart cleared successfully!");
+    toast.success("🗑️ Cart cleared successfully !");
     localStorage.removeItem("cartItems");
   };
 
@@ -77,34 +77,34 @@ const Cart = () => {
             <p>Your cart is empty.</p>
           </div>
         ) : (
-          <div className="flex flex-col flex-wrap py-5 w-full h-[30rem]">
-            <ul className="flex items-start p-3 overflow-auto h-full">
+          <div className="flex flex-col w-full h-[30rem]">
+            <ul className="grid grid-cols-2 items-start px-2 py-10 overflow-auto w-full h-full">
               {cartItems.map((item) => (
-                <li key={item.id} className="flex flex-col gap-5 p-2 w-1/2">
-                  <div className="flex items-start p-2 border border-zinc-700 rounded-md w-full">
-                    <div className="w-56">
+                <li key={item.id} className="flex flex-col gap-5 p-2 w-full">
+                  <div className="flex items-start justify-start p-2 pr-3 border border-zinc-700 rounded-md w-full">
+                    <div className="w-52">
                       <Image
                         src={urlFor(item.image)?.url() || "/emptycart.png"}
                         alt={item.title}
                         width={1000}
                         height={1000}
                         priority
-                        className="rounded w-full"
+                        className="rounded border w-full"
                       />
                     </div>
-                    <div className="flex flex-col items-start justify-between px-5 w-full h-40">
-                      <DrawerTitle className="text-xl pt-2 font-medium">
+                    <div className="flex flex-col items-start justify-between pl-5 w-full h-40">
+                      <DrawerTitle className="text-2xl leading-none font-medium">
                         {item.title}
                       </DrawerTitle>
                       <DrawerDescription>
-                        {item.description} is an amazing product!
+                        {item.description.slice(0, 260)}...
                       </DrawerDescription>
 
-                      <div className="flex items-center justify-between text-sm mt-3 w-full">
-                        {item.size && <p>Size: {item.size}</p>}
+                      <div className="flex items-center justify-between text-base font-medium w-full">
+                        {item.size && <p>Size : {item.size}</p>}
                         {item.color && (
                           <div className="flex items-center">
-                            Color:{" "}
+                            Color :{" "}
                             <div
                               className="ml-2 border border-zinc-500 dark:border-zinc-800 rounded-full w-4 h-4"
                               style={{

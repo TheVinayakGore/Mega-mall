@@ -45,6 +45,11 @@ export default defineType({
       type: "number",
     }),
     defineField({
+      title: "Stock",
+      name: "stock",
+      type: "number",
+    }),
+    defineField({
       title: "Description",
       name: "description",
       type: "text",
@@ -97,11 +102,6 @@ export default defineType({
       name: "likes",
       type: "number",
       initialValue: 0,
-    }),
-    defineField({
-      title: "Review Descriptions",
-      name: "reviewDescription",
-      type: "text",
     }),
   ],
 });

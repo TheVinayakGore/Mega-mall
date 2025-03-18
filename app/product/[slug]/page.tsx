@@ -23,7 +23,6 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog";
-// import Link from "next/link";
 
 interface Product {
   _id: string;
@@ -36,7 +35,6 @@ interface Product {
   description: string;
   color: string[];
   size: string[];
-  reviewDescription: string;
   price: number;
   image: {
     asset: {
@@ -158,6 +156,7 @@ const ProductDetails = () => {
       const cartItem = {
         id: product._id,
         title: product.title,
+        description: product.description,
         price: product.price,
         quantity: 1,
         image: product.image,
@@ -281,7 +280,7 @@ const ProductDetails = () => {
                   onClick={handleLikeClick}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  className="-ml-12 mt-2 border-none shadow-md rounded-full"
+                  className="-ml-12 mt-2 border-none shadow-md rounded-full z-50"
                 >
                   <PiHeartFill
                     className={`h-10 w-10 bg-white/[0.3] hover:text-rose-600 rounded-full p-2 ${
@@ -663,7 +662,15 @@ const ProductDetails = () => {
               </div>
             </div>
             <div className="pt-5">
-              <p>{product.reviewDescription}</p>
+              <p>
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fuga,
+                earum. Eveniet quis, reprehenderit alias impedit laudantium vel
+                rem fugit labore iste fuga unde saepe animi exercitationem
+                itaque aliquid rerum quam nostrum quisquam dolore consequuntur
+                maiores soluta quod. Perferendis qui vel obcaecati velit,
+                quisquam a quibusdam, perspiciatis quas, molestias fugit labore
+                !
+              </p>
             </div>
           </motion.section>
         </div>

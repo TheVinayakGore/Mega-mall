@@ -21,8 +21,12 @@ import { Trash2, Edit } from "lucide-react";
 import Image from "next/image";
 import { Product } from "./ProductType";
 
+interface ProductWithSanityId extends Product {
+  _sanityId: string;
+}
+
 interface ProductTableProps {
-  products: Product[];
+  products: ProductWithSanityId[];
   setEditingProduct: (product: Product | null) => void;
   handleDeleteProduct: (id: number) => void;
   openProductDialog: (product: Product) => void;
@@ -50,14 +54,20 @@ const ProductTable: React.FC<ProductTableProps> = ({
               <TableCaption>A list of your products.</TableCaption>
               <TableHeader>
                 <TableRow className="border-b bg-zinc-50 dark:bg-zinc-900 h-10">
-                  <TableHead className="w-40 border border-b-0">
+                  <TableHead className="w-32 border border-b-0">
                     Title
                   </TableHead>
-                  <TableHead className="w-40 border border-b-0">Slug</TableHead>
+                  <TableHead className="w-32 border border-b-0">Slug</TableHead>
                   <TableHead className="w-24 border border-b-0">
                     Price
                   </TableHead>
                   <TableHead className="w-32 border border-b-0">Tag</TableHead>
+                  <TableHead className="w-32 border border-b-0">
+                    Brand
+                  </TableHead>
+                  <TableHead className="w-32 border border-b-0">
+                    Category
+                  </TableHead>
                   <TableHead className="w-32 border border-b-0">
                     Image
                   </TableHead>
@@ -80,17 +90,17 @@ const ProductTable: React.FC<ProductTableProps> = ({
               </TableHeader>
               <TableBody className="border-b whitespace-nowrap overflow-auto">
                 {products.map((product) => (
-                  <TableRow key={product.id} className="h-28">
+                  <TableRow key={product._sanityId} className="h-28">
                     {/* Title */}
                     <TableCell
                       onClick={() => openProductDialog(product)}
-                      className="w-40 border-l border-r hover:text-blue-500 hover:underline underline-offset-8 cursor-pointer h-28"
+                      className="w-32 overflow-auto border-l border-r hover:text-blue-500 hover:underline underline-offset-8 cursor-pointer h-28"
                     >
                       {product.title || "-"}
                     </TableCell>
 
                     {/* Slug */}
-                    <TableCell className="w-40 border-r h-28">
+                    <TableCell className="w-32 overflow-auto border-r h-28">
                       {product.slug || "-"}
                     </TableCell>
 
@@ -102,6 +112,16 @@ const ProductTable: React.FC<ProductTableProps> = ({
                     {/* Tag */}
                     <TableCell className="w-32 border-r h-28">
                       {product.tag || "-"}
+                    </TableCell>
+
+                    {/* Brand */}
+                    <TableCell className="w-32 border-r h-28">
+                      {product.brand || "-"}
+                    </TableCell>
+
+                    {/* Category */}
+                    <TableCell className="w-32 border-r h-28">
+                      {product.category || "-"}
                     </TableCell>
 
                     {/* Image */}
@@ -126,7 +146,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
                     </TableCell>
 
                     {/* Gallery */}
-                    <TableCell className="w-44 whitespace-nowrap overflow-auto border-r h-28">
+                    <TableCell className="w-44 overflow-auto border-r h-28">
                       {product.gallery && product.gallery.length > 0 ? (
                         product.gallery.map((url, index) => (
                           <Image
@@ -151,23 +171,25 @@ const ProductTable: React.FC<ProductTableProps> = ({
 
                     {/* Stock */}
                     <TableCell className="w-24 border-r h-28">
-                      {product.stock ?? "-"}
+                      {product.stock !== undefined && product.stock !== null
+                        ? product.stock
+                        : "-"}
                     </TableCell>
 
                     {/* Colors */}
                     <TableCell className="w-20 border-r h-28 overflow-auto">
                       <ul className="flex flex-col items-start gap-1 whitespace-nowrap overflow-auto h-full">
-                        {product.colors && product.colors.length > 0
-                          ? product.colors.map((color, index) => (
+                        {product.color && product.color.length > 0
+                          ? product.color.map((item, index) => (
                               <li
                                 key={index}
                                 className="flex items-center gap-1"
                               >
                                 <div
                                   className={`rounded-full mt-1 w-3 h-3`}
-                                  style={{ backgroundColor: `#${color}` }}
+                                  style={{ backgroundColor: item }} // Ensure valid color format
                                 ></div>
-                                {color}
+                                {item ? item : "-"}
                               </li>
                             ))
                           : "-"}
@@ -177,13 +199,13 @@ const ProductTable: React.FC<ProductTableProps> = ({
                     {/* Sizes */}
                     <TableCell className="w-20 border-r h-28 overflow-auto">
                       <ul className="flex flex-col items-start justify-start gap-3 whitespace-nowrap overflow-auto h-full">
-                        {product.sizes && product.sizes.length > 0
-                          ? product.sizes.map((size, index) => (
+                        {product.size && product.size.length > 0
+                          ? product.size.map((item, index) => (
                               <li
                                 key={index}
                                 className="flex justify-center bg-zinc-50 dark:bg-zinc-900 border w-full h-10 rounded p-2"
                               >
-                                {size}
+                                {item ? item : "-"}
                               </li>
                             ))
                           : "-"}

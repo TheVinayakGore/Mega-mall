@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { client } from "@/sanity/lib/client";
+import { urlFor } from "@/sanity/lib/image";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,102 +20,334 @@ import { HiMiniMinusSmall } from "react-icons/hi2";
 import toast from "react-hot-toast";
 import ProductTable from "./ProductTable";
 import ProductDialog from "./ProductDialog";
-import { Product } from "./ProductType";
+import { Product } from "./ProductType"; // Ensure this is imported
+import { SanityProduct } from "./ProductType"; // Import SanityProduct
+import { nanoid } from "nanoid"; // or use any other unique ID generator
+
+interface ProductWithSanityId extends Product {
+  _sanityId: string;
+}
 
 const Page = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductWithSanityId[]>([]);
   const [newProduct, setNewProduct] = useState<Product>({
     id: 0,
     title: "",
     description: "",
     price: 0,
+    mrp: 0, // Added MRP
     tag: "",
+    brand: "", // Added Brand
+    category: "", // Added Category
     image: "",
     gallery: [],
     stock: 0,
     slug: "",
     rating: 0,
-    reviews: [],
-    colors: [],
-    sizes: [],
+    review: 0,
+    color: [],
+    size: [],
   });
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isCardContentVisible, setIsCardContentVisible] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  // Save products to localStorage whenever products state changes
-  useEffect(() => {
-    if (products.length > 0) {
-      localStorage.setItem("products", JSON.stringify(products));
-      console.log("Saved products:", products);
-    }
-  }, [products]);
+  const generateSlug = (title: string): string => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9-]+/g, "-") // Replace non-alphanumeric with dashes
+      .replace(/^-+|-+$/g, "") // Remove leading/trailing dashes
+      .replace(/-+/g, "-"); // Replace multiple dashes with single dash
+  };
 
-  // Load products from localStorage when the component mounts
-  useEffect(() => {
-    const savedProducts = localStorage.getItem("products");
-    if (savedProducts) {
-      try {
-        const parsedProducts = JSON.parse(savedProducts);
-        if (Array.isArray(parsedProducts)) {
-          setProducts(parsedProducts);
-          console.log("Loaded products:", parsedProducts); // Debugging
-        } else {
-          console.error("Parsed data is not an array:", parsedProducts);
-        }
-      } catch (error) {
-        console.error("Error parsing products:", error);
-        toast.error("Error parsing products from localStorage");
-      }
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const title = e.target.value;
+    if (editingProduct) {
+      setEditingProduct({
+        ...editingProduct,
+        title: title,
+        slug: generateSlug(title), // Update slug here
+      });
+    } else {
+      setNewProduct({
+        ...newProduct,
+        title: title,
+        slug: generateSlug(title), // Update slug here
+      });
     }
+  };
+
+  // Fetch products initially and set up a real-time listener
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const sanityProducts: SanityProduct[] = await client.fetch(
+          `*[_type == "product"]`
+        );
+        const formattedProducts: ProductWithSanityId[] = sanityProducts.map(
+          (p) => ({
+            id: Date.now(),
+            title: p.title || "",
+            description: p.description || "",
+            price: p.price || 0,
+            mrp: p.mrp || 0,
+            tag: p.tag || "",
+            brand: p.brand || "",
+            category: p.category || "",
+            image: p.image?.asset?._ref ? urlFor(p.image.asset._ref).url() : "",
+            gallery:
+              p.gallery?.map((g) =>
+                g?.asset?._ref ? urlFor(g.asset._ref).url() : ""
+              ) || [],
+            stock: p.stock || 0,
+            slug: p.slug?.current || "",
+            rating: p.rating || 0,
+            review: p.review || 0,
+            color: p.color || [],
+            size: p.size || [],
+            _sanityId: p._id,
+          })
+        );
+
+        setProducts(formattedProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        toast.error("Failed to fetch products from Sanity.");
+      }
+    };
+
+    fetchProducts();
+
+    // Set up a real-time listener for updates
+    const subscription = client
+      .listen('*[_type == "product"]')
+      .subscribe((update) => {
+        if (update.result) {
+          const updatedProduct = update.result as SanityProduct;
+          const formattedProduct: ProductWithSanityId = {
+            id: Date.now(),
+            title: updatedProduct.title || "",
+            description: updatedProduct.description || "",
+            price: updatedProduct.price || 0,
+            mrp: updatedProduct.mrp || 0,
+            tag: updatedProduct.tag || "",
+            brand: updatedProduct.brand || "",
+            category: updatedProduct.category || "",
+            image: updatedProduct.image?.asset?._ref
+              ? urlFor(updatedProduct.image.asset._ref).url()
+              : "",
+            gallery:
+              updatedProduct.gallery?.map((g) =>
+                g?.asset?._ref ? urlFor(g.asset._ref).url() : ""
+              ) || [],
+            stock: updatedProduct.stock || 0,
+            slug: updatedProduct.slug?.current || "",
+            rating: updatedProduct.rating || 0,
+            review: updatedProduct.review || 0,
+            color: updatedProduct.color || [],
+            size: updatedProduct.size || [],
+            _sanityId: updatedProduct._id,
+          };
+
+          if (
+            update.transition === "appear" ||
+            update.transition === "update"
+          ) {
+            setProducts((prevProducts) =>
+              prevProducts.map((p) =>
+                p._sanityId === formattedProduct._sanityId
+                  ? formattedProduct
+                  : p
+              )
+            );
+          } else if (update.transition === "disappear") {
+            setProducts((prevProducts) =>
+              prevProducts.filter(
+                (p) => p._sanityId !== formattedProduct._sanityId
+              )
+            );
+          }
+        }
+      });
+
+    // Clean up the listener when the component unmounts
+    return () => subscription.unsubscribe();
   }, []);
 
-  // Log the current products state for debugging
-  useEffect(() => {
-    console.log("Current products state:", products);
-  }, [products]);
+  const uploadImageToSanity = async (imageUrl: string) => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
 
-  // Create a new product
-  const handleCreateProduct = () => {
-    const productWithId = { ...newProduct, id: Date.now() }; // Use a unique ID
-    console.log("Adding product:", productWithId); // Debugging
-    setProducts([...products, productWithId]);
-    setNewProduct({
-      id: 0,
-      title: "",
-      description: "",
-      price: 0,
-      tag: "",
-      image: "",
-      gallery: [],
-      stock: 0,
-      slug: "",
-      rating: 0,
-      reviews: [],
-      colors: [],
-      sizes: [],
-    });
-  };
-
-  // Update a product
-  const handleUpdateProduct = () => {
-    if (editingProduct) {
-      setProducts(
-        products.map((p) => (p.id === editingProduct.id ? editingProduct : p))
-      );
-      setEditingProduct(null);
+      const asset = await client.assets.upload("image", blob);
+      return asset._id;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Failed to upload image.");
+      return null;
     }
   };
 
-  // Delete a product
-  const handleDeleteProduct = (id: number) => {
-    setProducts(products.filter((p) => p.id !== id));
+  const handleCreateProduct = async () => {
+    const productWithId = { ...newProduct, id: Date.now() };
+
+    try {
+      const sanityProduct = {
+        _type: "product",
+        title: productWithId.title,
+        description: productWithId.description,
+        price: productWithId.price,
+        mrp: productWithId.mrp,
+        tag: productWithId.tag,
+        brand: productWithId.brand,
+        category: productWithId.category,
+        image: {
+          _type: "image",
+          asset: {
+            _type: "reference",
+            _ref: await uploadImageToSanity(productWithId.image),
+          },
+        },
+        gallery: await Promise.all(
+          productWithId.gallery.map(async (imageUrl) => ({
+            _type: "image",
+            asset: {
+              _type: "reference",
+              _ref: await uploadImageToSanity(imageUrl),
+            },
+            _key: nanoid(), // Add a unique _key for each gallery item
+          }))
+        ),
+        stock: productWithId.stock,
+        slug: {
+          _type: "slug",
+          current: productWithId.slug,
+        },
+        rating: productWithId.rating,
+        review: productWithId.review,
+        color: productWithId.color,
+        size: productWithId.size,
+      };
+
+      const createdSanityProduct = await client.create(sanityProduct);
+
+      setProducts([
+        ...products,
+        { ...productWithId, _sanityId: createdSanityProduct._id },
+      ]);
+      setNewProduct({
+        id: 0,
+        title: "",
+        description: "",
+        price: 0,
+        mrp: 0,
+        tag: "",
+        brand: "",
+        category: "",
+        image: "",
+        gallery: [],
+        stock: 0,
+        slug: "",
+        rating: 0,
+        review: 0,
+        color: [],
+        size: [],
+      });
+      toast.success("Product created successfully!");
+    } catch (error) {
+      console.error("Error creating product:", error);
+      toast.error("Failed to create product.");
+    }
   };
 
-  // Handle array inputs (gallery, colors, sizes, reviews)
+  const handleUpdateProduct = async () => {
+    if (editingProduct) {
+      try {
+        const sanityProduct = {
+          _type: "product",
+          title: editingProduct.title,
+          description: editingProduct.description,
+          price: editingProduct.price,
+          mrp: editingProduct.mrp,
+          tag: editingProduct.tag,
+          brand: editingProduct.brand,
+          category: editingProduct.category,
+          image: {
+            _type: "image",
+            asset: {
+              _type: "reference",
+              _ref: await uploadImageToSanity(editingProduct.image),
+            },
+          },
+          gallery: await Promise.all(
+            editingProduct.gallery.map(async (imageUrl) => ({
+              _type: "image",
+              asset: {
+                _type: "reference",
+                _ref: await uploadImageToSanity(imageUrl),
+              },
+              _key: nanoid(), // Add a unique _key for each gallery item
+            }))
+          ),
+          stock: editingProduct.stock,
+          slug: {
+            _type: "slug",
+            current: editingProduct.slug,
+          },
+          rating: editingProduct.rating,
+          review: editingProduct.review,
+          color: editingProduct.color,
+          size: editingProduct.size,
+        };
+
+        const productToUpdate = products.find(
+          (p) => p.id === editingProduct.id
+        );
+
+        if (productToUpdate) {
+          await client
+            .patch(productToUpdate._sanityId)
+            .set(sanityProduct)
+            .commit();
+
+          setProducts(
+            products.map((p) =>
+              p.id === editingProduct.id
+                ? { ...editingProduct, _sanityId: productToUpdate._sanityId }
+                : p
+            )
+          );
+          setEditingProduct(null);
+          toast.success("Product updated successfully!");
+        } else {
+          toast.error("Product not found for update.");
+        }
+      } catch (error) {
+        console.error("Error updating product:", error);
+        toast.error("Failed to update product.");
+      }
+    }
+  };
+
+  const handleDeleteProduct = async (id: number) => {
+    const productToDelete = products.find((p) => p.id === id);
+    if (productToDelete) {
+      try {
+        await client.delete(productToDelete._sanityId);
+        setProducts(products.filter((p) => p.id !== id));
+        toast.success("Product deleted successfully !");
+      } catch (error) {
+        console.error("Error deleting product :", error);
+        toast.error("Failed to delete product.");
+      }
+    } else {
+      toast.error("product to delete not found");
+    }
+  };
+
   const handleArrayInputChange = (
-    field: "gallery" | "reviews" | "colors" | "sizes", // Narrow the type of field
+    field: "gallery" | "color" | "size",
     value: string,
     index?: number
   ) => {
@@ -136,12 +370,10 @@ const Page = () => {
     }
   };
 
-  // Toggle function to show/hide CardContent
   const toggleCardContent = () => {
     setIsCardContentVisible((prev) => !prev);
   };
 
-  // Open dialog with product details
   const openProductDialog = (product: Product) => {
     setSelectedProduct(product);
     setIsDialogOpen(true);
@@ -194,17 +426,7 @@ const Page = () => {
                             ? editingProduct.title
                             : newProduct.title
                         }
-                        onChange={(e) =>
-                          editingProduct
-                            ? setEditingProduct({
-                                ...editingProduct,
-                                title: e.target.value,
-                              })
-                            : setNewProduct({
-                                ...newProduct,
-                                title: e.target.value,
-                              })
-                        }
+                        onChange={handleTitleChange} // Use handleTitleChange
                       />
                     </li>
                     <li className="flex flex-col gap-3 w-full">
@@ -250,6 +472,27 @@ const Page = () => {
                         }
                       />
                     </li>
+                    <li className="flex flex-col gap-3 w-full">
+                      <Label htmlFor="mrp">MRP</Label>
+                      <Input
+                        type="number"
+                        placeholder="MRP"
+                        value={
+                          editingProduct ? editingProduct.mrp : newProduct.mrp
+                        }
+                        onChange={(e) =>
+                          editingProduct
+                            ? setEditingProduct({
+                                ...editingProduct,
+                                mrp: parseFloat(e.target.value),
+                              })
+                            : setNewProduct({
+                                ...newProduct,
+                                mrp: parseFloat(e.target.value),
+                              })
+                        }
+                      />
+                    </li>
                   </ul>
                   <div className="flex flex-col gap-3 w-full">
                     <Label htmlFor="description">Description</Label>
@@ -275,6 +518,101 @@ const Page = () => {
                       }
                     />
                   </div>
+                  {/* Brand and Category */}
+                  <ul className="flex items-start gap-10 w-full">
+                    <li className="flex flex-col gap-3 w-full">
+                      <Label htmlFor="brand">Brand</Label>
+                      <Input
+                        placeholder="Brand"
+                        value={
+                          editingProduct
+                            ? editingProduct.brand
+                            : newProduct.brand
+                        }
+                        onChange={(e) =>
+                          editingProduct
+                            ? setEditingProduct({
+                                ...editingProduct,
+                                brand: e.target.value,
+                              })
+                            : setNewProduct({
+                                ...newProduct,
+                                brand: e.target.value,
+                              })
+                        }
+                      />
+                    </li>
+                    <li className="flex flex-col gap-3 w-full">
+                      <Label htmlFor="category">Category</Label>
+                      <Input
+                        placeholder="Category"
+                        value={
+                          editingProduct
+                            ? editingProduct.category
+                            : newProduct.category
+                        }
+                        onChange={(e) =>
+                          editingProduct
+                            ? setEditingProduct({
+                                ...editingProduct,
+                                category: e.target.value,
+                              })
+                            : setNewProduct({
+                                ...newProduct,
+                                category: e.target.value,
+                              })
+                        }
+                      />
+                    </li>
+                  </ul>
+                  <ul className="flex items-start gap-10 w-full">
+                    <li className="flex flex-col gap-3 w-full">
+                      <Label htmlFor="rating">Rating</Label>
+                      <Input
+                        type="number"
+                        placeholder="Rating"
+                        value={
+                          editingProduct
+                            ? editingProduct.rating
+                            : newProduct.rating
+                        }
+                        onChange={(e) =>
+                          editingProduct
+                            ? setEditingProduct({
+                                ...editingProduct,
+                                rating: parseFloat(e.target.value),
+                              })
+                            : setNewProduct({
+                                ...newProduct,
+                                rating: parseFloat(e.target.value),
+                              })
+                        }
+                      />
+                    </li>
+                    <li className="flex flex-col gap-3 w-full">
+                      <Label htmlFor="review">Review</Label>
+                      <Input
+                        type="number"
+                        placeholder="Review"
+                        value={
+                          editingProduct
+                            ? editingProduct.review
+                            : newProduct.review
+                        }
+                        onChange={(e) =>
+                          editingProduct
+                            ? setEditingProduct({
+                                ...editingProduct,
+                                review: parseFloat(e.target.value),
+                              })
+                            : setNewProduct({
+                                ...newProduct,
+                                review: parseFloat(e.target.value),
+                              })
+                        }
+                      />
+                    </li>
+                  </ul>
                   <ul className="flex items-start gap-10 w-full">
                     <li className="flex flex-col gap-3 w-full">
                       <Label htmlFor="imageUrl">Image URL</Label>
@@ -372,16 +710,16 @@ const Page = () => {
                     <li className="flex flex-col gap-3 w-full">
                       <Label htmlFor="colors">Colors</Label>
                       {(editingProduct
-                        ? editingProduct.colors
-                        : newProduct.colors
-                      ).map((color, index) => (
+                        ? editingProduct.color
+                        : newProduct.color
+                      ).map((item, index) => (
                         <Input
                           key={index}
                           placeholder={`Color ${index + 1}`}
-                          value={color}
+                          value={item}
                           onChange={(e) =>
                             handleArrayInputChange(
-                              "colors",
+                              "color",
                               e.target.value,
                               index
                             )
@@ -390,7 +728,7 @@ const Page = () => {
                       ))}
                       <Button
                         variant="outline"
-                        onClick={() => handleArrayInputChange("colors", "")}
+                        onClick={() => handleArrayInputChange("color", "")}
                       >
                         Add Color
                       </Button>
@@ -398,16 +736,16 @@ const Page = () => {
                     <li className="flex flex-col gap-3 w-full">
                       <Label htmlFor="sizes">Sizes</Label>
                       {(editingProduct
-                        ? editingProduct.sizes
-                        : newProduct.sizes
-                      ).map((size, index) => (
+                        ? editingProduct.size
+                        : newProduct.size
+                      ).map((item, index) => (
                         <Input
                           key={index}
                           placeholder={`Size ${index + 1}`}
-                          value={size}
+                          value={item}
                           onChange={(e) =>
                             handleArrayInputChange(
-                              "sizes",
+                              "size",
                               e.target.value,
                               index
                             )
@@ -416,7 +754,7 @@ const Page = () => {
                       ))}
                       <Button
                         variant="outline"
-                        onClick={() => handleArrayInputChange("sizes", "")}
+                        onClick={() => handleArrayInputChange("size", "")}
                       >
                         Add Size
                       </Button>
