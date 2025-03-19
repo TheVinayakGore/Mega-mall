@@ -20,6 +20,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.8",
     "@reduxjs/toolkit": "^2.5.0",
+    "@sanity/asset-utils": "^2.2.1",
     "@sanity/client": "^6.28.3",
     "@sanity/image-url": "^1.0.2",
     "@sanity/vision": "^3.59.1",

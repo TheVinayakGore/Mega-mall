@@ -20,9 +20,10 @@ import { HiMiniMinusSmall } from "react-icons/hi2";
 import toast from "react-hot-toast";
 import ProductTable from "./ProductTable";
 import ProductDialog from "./ProductDialog";
-import { Product } from "./ProductType"; // Ensure this is imported
-import { SanityProduct } from "./ProductType"; // Import SanityProduct
-import { nanoid } from "nanoid"; // or use any other unique ID generator
+import { Product } from "./ProductType";
+import { SanityProduct } from "./ProductType";
+import { nanoid } from "nanoid";
+import { uploadImageToSanity } from "@/utils/uploadImage";
 
 interface ProductWithSanityId extends Product {
   _sanityId: string;
@@ -35,10 +36,10 @@ const Page = () => {
     title: "",
     description: "",
     price: 0,
-    mrp: 0, // Added MRP
+    mrp: 0,
     tag: "",
-    brand: "", // Added Brand
-    category: "", // Added Category
+    brand: "",
+    category: "",
     image: "",
     gallery: [],
     stock: 0,
@@ -56,9 +57,9 @@ const Page = () => {
   const generateSlug = (title: string): string => {
     return title
       .toLowerCase()
-      .replace(/[^a-z0-9-]+/g, "-") // Replace non-alphanumeric with dashes
-      .replace(/^-+|-+$/g, "") // Remove leading/trailing dashes
-      .replace(/-+/g, "-"); // Replace multiple dashes with single dash
+      .replace(/[^a-z0-9-]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .replace(/-+/g, "-");
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,18 +68,17 @@ const Page = () => {
       setEditingProduct({
         ...editingProduct,
         title: title,
-        slug: generateSlug(title), // Update slug here
+        slug: generateSlug(title),
       });
     } else {
       setNewProduct({
         ...newProduct,
         title: title,
-        slug: generateSlug(title), // Update slug here
+        slug: generateSlug(title),
       });
     }
   };
 
-  // Fetch products initially and set up a real-time listener
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -119,7 +119,6 @@ const Page = () => {
 
     fetchProducts();
 
-    // Set up a real-time listener for updates
     const subscription = client
       .listen('*[_type == "product"]')
       .subscribe((update) => {
@@ -171,21 +170,60 @@ const Page = () => {
         }
       });
 
-    // Clean up the listener when the component unmounts
     return () => subscription.unsubscribe();
   }, []);
 
-  const uploadImageToSanity = async (imageUrl: string) => {
-    try {
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-      const asset = await client.assets.upload("image", blob);
-      return asset._id;
+    try {
+      const assetId = await uploadImageToSanity(file);
+      console.log("Image uploaded successfully! Asset ID:", assetId);
+
+      // Update the product state with the new image asset ID
+      if (editingProduct) {
+        setEditingProduct({ ...editingProduct, image: assetId });
+      } else {
+        setNewProduct({ ...newProduct, image: assetId });
+      }
     } catch (error) {
       console.error("Error uploading image:", error);
       toast.error("Failed to upload image.");
-      return null;
+    }
+  };
+
+  const handleGalleryImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index?: number
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const assetId = await uploadImageToSanity(file);
+      console.log("Gallery image uploaded successfully! Asset ID:", assetId);
+
+      if (editingProduct) {
+        const updatedGallery = [...editingProduct.gallery];
+        if (index !== undefined) {
+          updatedGallery[index] = assetId;
+        } else {
+          updatedGallery.push(assetId);
+        }
+        setEditingProduct({ ...editingProduct, gallery: updatedGallery });
+      } else {
+        const updatedGallery = [...newProduct.gallery];
+        if (index !== undefined) {
+          updatedGallery[index] = assetId;
+        } else {
+          updatedGallery.push(assetId);
+        }
+        setNewProduct({ ...newProduct, gallery: updatedGallery });
+      }
+    } catch (error) {
+      console.error("Error uploading gallery image:", error);
+      toast.error("Failed to upload gallery image.");
     }
   };
 
@@ -206,18 +244,33 @@ const Page = () => {
           _type: "image",
           asset: {
             _type: "reference",
-            _ref: await uploadImageToSanity(productWithId.image),
+            _ref: productWithId.image, // Use the asset ID directly
           },
         },
         gallery: await Promise.all(
-          productWithId.gallery.map(async (imageUrl) => ({
-            _type: "image",
-            asset: {
-              _type: "reference",
-              _ref: await uploadImageToSanity(imageUrl),
-            },
-            _key: nanoid(), // Add a unique _key for each gallery item
-          }))
+          productWithId.gallery.map(async (imageUrl) => {
+            // If the image is already an asset ID, use it directly
+            if (imageUrl.startsWith("image-")) {
+              return {
+                _type: "image",
+                asset: {
+                  _type: "reference",
+                  _ref: imageUrl,
+                },
+                _key: nanoid(),
+              };
+            }
+            // Otherwise, upload the image and get the asset ID
+            const assetId = await uploadImageToSanity(imageUrl);
+            return {
+              _type: "image",
+              asset: {
+                _type: "reference",
+                _ref: assetId,
+              },
+              _key: nanoid(),
+            };
+          })
         ),
         stock: productWithId.stock,
         slug: {
@@ -277,18 +330,33 @@ const Page = () => {
             _type: "image",
             asset: {
               _type: "reference",
-              _ref: await uploadImageToSanity(editingProduct.image),
+              _ref: editingProduct.image, // Use the asset ID directly
             },
           },
           gallery: await Promise.all(
-            editingProduct.gallery.map(async (imageUrl) => ({
-              _type: "image",
-              asset: {
-                _type: "reference",
-                _ref: await uploadImageToSanity(imageUrl),
-              },
-              _key: nanoid(), // Add a unique _key for each gallery item
-            }))
+            editingProduct.gallery.map(async (imageUrl) => {
+              // If the image is already an asset ID, use it directly
+              if (imageUrl.startsWith("image-")) {
+                return {
+                  _type: "image",
+                  asset: {
+                    _type: "reference",
+                    _ref: imageUrl,
+                  },
+                  _key: nanoid(),
+                };
+              }
+              // Otherwise, upload the image and get the asset ID
+              const assetId = await uploadImageToSanity(imageUrl);
+              return {
+                _type: "image",
+                asset: {
+                  _type: "reference",
+                  _ref: assetId,
+                },
+                _key: nanoid(),
+              };
+            })
           ),
           stock: editingProduct.stock,
           slug: {
@@ -336,13 +404,13 @@ const Page = () => {
       try {
         await client.delete(productToDelete._sanityId);
         setProducts(products.filter((p) => p.id !== id));
-        toast.success("Product deleted successfully !");
+        toast.success("Product deleted successfully!");
       } catch (error) {
-        console.error("Error deleting product :", error);
+        console.error("Error deleting product:", error);
         toast.error("Failed to delete product.");
       }
     } else {
-      toast.error("product to delete not found");
+      toast.error("Product to delete not found.");
     }
   };
 
@@ -426,7 +494,7 @@ const Page = () => {
                             ? editingProduct.title
                             : newProduct.title
                         }
-                        onChange={handleTitleChange} // Use handleTitleChange
+                        onChange={handleTitleChange}
                       />
                     </li>
                     <li className="flex flex-col gap-3 w-full">
@@ -615,44 +683,24 @@ const Page = () => {
                   </ul>
                   <ul className="flex items-start gap-10 w-full">
                     <li className="flex flex-col gap-3 w-full">
-                      <Label htmlFor="imageUrl">Image URL</Label>
-                      <Input
-                        placeholder="Image URL"
-                        value={
-                          editingProduct
-                            ? editingProduct.image
-                            : newProduct.image
-                        }
-                        onChange={(e) =>
-                          editingProduct
-                            ? setEditingProduct({
-                                ...editingProduct,
-                                image: e.target.value,
-                              })
-                            : setNewProduct({
-                                ...newProduct,
-                                image: e.target.value,
-                              })
-                        }
+                      <Label htmlFor="image">Image</Label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
                       />
                     </li>
                     <li className="flex flex-col gap-3 w-full">
-                      <Label htmlFor="gallery">Gallery (Image URLs)</Label>
+                      <Label htmlFor="gallery">Gallery (Images)</Label>
                       {(editingProduct
                         ? editingProduct.gallery
                         : newProduct.gallery
-                      ).map((url, index) => (
-                        <Input
+                      ).map((file, index) => (
+                        <input
                           key={index}
-                          placeholder={`Gallery Image URL ${index + 1}`}
-                          value={url}
-                          onChange={(e) =>
-                            handleArrayInputChange(
-                              "gallery",
-                              e.target.value,
-                              index
-                            )
-                          }
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleGalleryImageUpload(e, index)}
                         />
                       ))}
                       <Button

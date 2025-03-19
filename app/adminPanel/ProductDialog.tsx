@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
+import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import {
   Dialog,
@@ -251,7 +252,7 @@ const ProductDialog: React.FC<ProductDialogProps> = ({
                     </p>
                     <motion.div whileHover={{ scale: 1.02 }}>
                       <Image
-                        src={selectedProduct.image}
+                        src={selectedProduct.image} // Use urlFor to get the image URL
                         alt={selectedProduct.title || "Product Image"}
                         width={2000}
                         height={2000}
@@ -281,20 +282,14 @@ const ProductDialog: React.FC<ProductDialogProps> = ({
                       Gallery
                     </p>
                     <div className="flex items-start gap-5 w-full h-full p-6 overflow-auto">
-                      {selectedProduct.gallery.map((url, index) => (
-                        <motion.div
+                      {selectedProduct.gallery.map((image, index) => (
+                        <Image
                           key={index}
-                          whileHover={{ scale: 1.1 }}
-                          className="flex-shrink-0 rounded-md border shadow-md w-auto h-full"
-                        >
-                          <Image
-                            src={url}
-                            alt={`Gallery ${index + 1}`}
-                            width={500}
-                            height={500}
-                            className="w-auto h-36 rounded-md"
-                          />
-                        </motion.div>
+                          src={urlFor(image).url()}
+                          alt={`Gallery image ${index + 1}`}
+                          width={200}
+                          height={200}
+                        />
                       ))}
                     </div>
                   </motion.div>
