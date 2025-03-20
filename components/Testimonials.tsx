@@ -6,18 +6,18 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 const testimonials = [
   {
     name: "John Doe",
-    avatar: "/vinu.png",
+    avatar: "/mem2.jpeg",
     comment:
       "Mega Mall has the best deals! I always find what I need at great prices.",
   },
   {
     name: "Jane Smith",
-    avatar: "/vinu.png",
+    avatar: "/mem3.jpeg",
     comment: "The customer service is amazing, and the delivery is super fast!",
   },
   {
     name: "Alice Johnson",
-    avatar: "/vinu.png",
+    avatar: "/mem5.jpeg",
     comment: "I love the variety of products available. Highly recommended!",
   },
 ];

@@ -91,7 +91,7 @@ export const TeamMembers = () => {
             </motion.div>
           ))}
         </motion.section>
-        <h1 className="text-9xl font-extrabold text-center bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-green-500 w-full">
+        <h1 className="text-9xl text-center font-semibold bg-clip-text text-transparent bg-gradient-to-br from-sky-400 to-fuchsia-500 w-full h-full">
           Meet Our <br /> Team
         </h1>
       </motion.main>

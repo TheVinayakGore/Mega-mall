@@ -60,15 +60,11 @@ const Navbar = () => {
           <li className="flex items-center justify-center gap-5 m-auto w-full">
             <div className="inline-flex items-center gap-4 whitespace-nowrap">
               <Link href="/about" target="_blank" className={navLinkClass}>
-                About
+                About Us
                 <PiArrowUpRightBold className="text-xs font-light w-2 h-2" />
               </Link>
               <Link href="/help" target="_blank" className={navLinkClass}>
                 Help
-                <PiArrowUpRightBold className="text-xs font-light w-2 h-2" />
-              </Link>
-              <Link href="/faq" target="_blank" className={navLinkClass}>
-                FAQ
                 <PiArrowUpRightBold className="text-xs font-light w-2 h-2" />
               </Link>
               <Link href="/adminPanel" target="_blank" className={navLinkClass}>

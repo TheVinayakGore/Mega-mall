@@ -54,7 +54,7 @@ export const Stats = () => {
   return (
     <>
       <main className="flex items-center justify-center m-auto gap-20 w-full h-full">
-        <h1 className="text-9xl leading-none text-start font-extrabold bg-clip-text text-transparent bg-gradient-to-t from-yellow-400 to-orange-500">
+        <h1 className="text-9xl font-semibold bg-clip-text text-transparent bg-gradient-to-tr from-sky-400 to-fuchsia-500 h-full">
           Why Choose <br /> Us ?
         </h1>
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-7 w-full h-full">
